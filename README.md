@@ -13,7 +13,7 @@
 - 사용자가 댓글 달 수 있는 기능 추가할까?
 - 관심 연예인 소식 푸시 알림 기능 추가할까?
 
-## Git Rule
+## Commit Rule
 - Github 브랜치 자기 이름으로 파기
 - Frontend, Backend 폴더 생성
 
@@ -22,7 +22,7 @@
 - UI 참고: [Pinterest](https://www.pinterest.co.kr/?autologin=true)
 
 ## Backend
-- [김성수](https://github.com/korkeep), [장성혁](https://github.com/SeongHyukJang) (AWS, JAVA SpringBoot)
+- [김성수](https://github.com/korkeep), [장성혁](https://github.com/SeongHyukJang) (AWS, Python Django)
 - 서버(Python Django), 클라우드(AWS EC2, S3, Lambda, SNS) 활용
 - AWS 비용 이슈 최소화 방법 적용
 - 동영상 썸네일 이미지 생성
