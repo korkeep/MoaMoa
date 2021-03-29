@@ -23,7 +23,7 @@
 
 ## Backend
 - [김성수](https://github.com/korkeep), [장성혁](https://github.com/SeongHyukJang) (AWS, JAVA SpringBoot)
-- 서버(SpringBoot), 클라우드(AWS EC2, S3, Lambda, SNS) 활용
+- 서버(Python Django), 클라우드(AWS EC2, S3, Lambda, SNS) 활용
 - AWS 비용 이슈 최소화 방법 적용
 - 동영상 썸네일 이미지 생성
 - 이미지 픽셀 크기 API화
