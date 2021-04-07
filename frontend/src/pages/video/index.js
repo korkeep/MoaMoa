@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import SEO from '../components/SEO'
-import Image from '../components/image'
+import SEO from '../../components/SEO'
 
 
 const MainContainer = styled.div`

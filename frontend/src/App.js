@@ -3,9 +3,12 @@ import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-d
 
 import GlobalStyle from './styles/GlobalStyle'
 import Header from './components/header'
-import Footer from './components/footer'
-import Index from './pages/index'
+import SideBar from './components/sidebar'
 import page404 from './pages/404'
+import Image from './pages/image'
+import Video from './pages/video'
+import Music from './pages/music'
+import Etc from './pages/etc'
 
 
 function App() {
@@ -14,10 +17,16 @@ function App() {
       <GlobalStyle />
       <Header />
         <Switch>
-          <Route exact path="/" component={Index} />
+          <Route path="/image" component={Image} />
+          <Route path="/video" component={Video} />
+          <Route path="/Music" component={Music} />
+          <Route path="/Etc" component={Etc} />
+          <Route exact path="/">
+            <Redirect to="/image"/>
+          </Route>
           <Route component={page404} />
         </Switch>
-      <Footer />
+      <SideBar />
     </Router>
   );
 }
