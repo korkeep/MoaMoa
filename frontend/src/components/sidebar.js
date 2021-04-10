@@ -9,7 +9,7 @@ const MainContainer = styled.div`
     position: fixed;
     width: 100px;
     right: 0;
-    bottom: 200px;
+    bottom: 5%;
 `
 
 const ButtonWrapper = styled.div`

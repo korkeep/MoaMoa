@@ -4,7 +4,19 @@ import styled from 'styled-components'
 
 
 // 헤더 사이즈
-const header_height = "80px"
+const header_height = "140px"
+
+const HeaderTop = styled.div`
+    background-color: black;
+    float:up;
+    height : 20px;
+`
+
+const HeaderBottom = styled.div`
+    background-color: #F2C5FA;
+    height : 8px;
+    border:2px solid #C0C0C0;
+`
 
 const MainContainer = styled.div`
     height: ${header_height};
@@ -12,22 +24,82 @@ const MainContainer = styled.div`
     top: 0;
     width: 100%;
     z-index: 999;
-    background-color: white;
+    background-color: #EEEEEE;
 `
 
 const LogoContainer = styled.div`
     display: inline-block;
+
+    img {
+        width: 80%;
+        border:2px solid #C0C0C0;
+        vertical-align : bottom;
+    }
 `
 
 
 const SearchContainer = styled.div`
-    display: inline-block;
+    position:fixed;
+    top:73px;
+    left:280px;
+    input {
+        width: 500px;
+        padding: 12px 24px;
+
+        transition: transform 250ms ease-in-out;
+        font-size: 17px;
+        line-height: 12px;
+
+        color: #575756;
+        //background-color: #C0C0C0;
+        background-color: transparent;
+
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-size: 18px 18px;
+        background-position: 95% center;
+        border-radius: 50px;
+        border: 1px solid #575756;
+        transition: all 250ms ease-in-out;
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
+
+        &::placeholder {
+            color: color(#575756 a(0.8));
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        &:hover,
+        &:focus {
+            padding: 12px 0;
+            outline: 0;
+            border: 1px solid transparent;
+            border-bottom: 1px solid #575756;
+            border-radius: 0;
+            background-position: 100% center;
+        }
+    }
 `
 
 const MenuContainer = styled.div`
-    display: inline-block;
-    ul li {list-style-type: none;}
-    ul {margin: 0; padding: 0;}
+    position:fixed;
+    top:75px;
+    right:0px;
+    ul li {
+        list-style-type: none;
+        color: white;               
+        background-color: #2d2d2d;  
+        float: left;               
+        line-height: 55px;          
+        vertical-align: middle;     
+        text-align: center;         
+        padding-left : 2em;
+        padding-right : 2em;
+    }
+    ul {
+        margin: 0; padding: 0;
+    }
     li {
         display: inline;
     }
@@ -50,8 +122,9 @@ export default function Header() {
     return (
         <>
             <MainContainer>
+                <HeaderTop />
                 <LogoContainer onClick={onMainClick}>
-                    MoaMoa
+                    <img src = "logo.png"></img>
                 </LogoContainer>
                 <SearchContainer>
                     <input
@@ -80,8 +153,11 @@ export default function Header() {
                         <Link to={`/etc` + query_string}><li>ETC</li></Link>
                     </ul>
                 </MenuContainer>
+                <HeaderBottom />
             </MainContainer>
-            <AirContainer />
+            
+            <AirContainer/>
         </>
+        //아이콘이미지는 따로 폴더를 생성해서 저장? 아니면 public폴더에 저장?
     )
 }
