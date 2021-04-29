@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { NavLink, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
 
@@ -13,7 +13,7 @@ const HeaderTop = styled.div`
 `
 
 const HeaderBottom = styled.div`
-    background-color: #F2C5FA;
+    background-color: #FEEBB6;
     height : 8px;
     border:2px solid #C0C0C0;
 `
@@ -24,24 +24,23 @@ const MainContainer = styled.div`
     top: 0;
     width: 100%;
     z-index: 999;
-    background-color: #EEEEEE;
+    background-color: #FFFFFF;
 `
 
 const LogoContainer = styled.div`
     display: inline-block;
-
+    padding-left : 10px;
     img {
-        width: 80%;
-        border:2px solid #C0C0C0;
+        width: 100px;
+        
         vertical-align : bottom;
     }
 `
 
-
 const SearchContainer = styled.div`
     position:fixed;
-    top:73px;
-    left:280px;
+    top:65px;
+    left:130px;
     input {
         width: 500px;
         padding: 12px 24px;
@@ -84,24 +83,33 @@ const SearchContainer = styled.div`
 
 const MenuContainer = styled.div`
     position:fixed;
-    top:75px;
+    top:49px;
     right:0px;
-    ul li {
-        list-style-type: none;
-        color: white;               
-        background-color: #2d2d2d;  
-        float: left;               
-        line-height: 55px;          
-        vertical-align: middle;     
-        text-align: center;         
-        padding-left : 2em;
-        padding-right : 2em;
+`
+const SLink = styled(NavLink)`
+    list-style-type: none;
+    color: black;               
+    float: left;               
+    line-height: 55px;          
+    vertical-align: middle;     
+    text-align: center;         
+    padding-left : 2em;
+    padding-right : 2em;
+    text-decoration: none !important;
+    &:hover {
+        background-color: #FEEBB6;
     }
-    ul {
-        margin: 0; padding: 0;
-    }
-    li {
-        display: inline;
+    &.active {
+    font-weight: 600;
+    background-color: #FEEBB6;
+    float: left;               
+    line-height: 55px;          
+    vertical-align: middle;     
+    text-align: center;         
+    padding-left : 2em;
+    padding-right : 2em;
+    color: black;
+    text-decoration: none !important;
     }
 `
 
@@ -147,10 +155,10 @@ export default function Header() {
                 </SearchContainer>
                 <MenuContainer>
                     <ul>
-                        <Link to={`/image` + query_string}><li>IMAGE</li></Link>
-                        <Link to={`/video` + query_string}><li>VIDEO</li></Link>
-                        <Link to={`/music` + query_string}><li>MUSIC</li></Link>
-                        <Link to={`/etc` + query_string}><li>ETC</li></Link>
+                        <SLink activeClassName="active" to={`/image` + query_string}>IMAGE</SLink>
+                        <SLink to={`/video` + query_string}>VIDEO</SLink>
+                        <SLink to={`/music` + query_string}>MUSIC</SLink>
+                        <SLink to={`/etc` + query_string}>ETC</SLink>
                     </ul>
                 </MenuContainer>
                 <HeaderBottom />
@@ -158,6 +166,5 @@ export default function Header() {
             
             <AirContainer/>
         </>
-        //아이콘이미지는 따로 폴더를 생성해서 저장? 아니면 public폴더에 저장?
     )
 }
