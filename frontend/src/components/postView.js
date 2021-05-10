@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { FaRegTimesCircle } from 'react-icons/fa'
+import { FaRegTimesCircle, FaPlus } from 'react-icons/fa'
 
 const MainContainer = styled.div`
     height: 100%;
@@ -30,7 +30,27 @@ const RelativeContainer = styled.div`
     width: 100%;
     height: 100%;
 `
-
+const TitleContainer = styled.div`
+    display: inline-block;
+    transform: translate(-50%, 0%);
+    position: fixed;
+    top: 0;
+    left: 50%;
+    padding: 20px;
+    font-size: 32px;
+    font-weight: bolder;
+`
+const DragDropContainer = styled.div`
+    position: fixed;
+    transform: translate(-50%, -50%);
+    top:50%;
+    left:50%;
+    width: 500px;
+    height: 400px;
+    border: 3px dashed #adb5bd;
+    &:hover { background-color:#e9ecef; };
+    cursor: pointer;
+`
 const ButtonWrapper = styled.div`
     display: inline-block;
     position: fixed;
@@ -38,8 +58,29 @@ const ButtonWrapper = styled.div`
     right: 0;
     padding: 8px;
     font-size: 32px;
+    cursor: pointer;
+`
+const SFaPlus = styled(FaPlus)`
+    position: fixed;
+    transform: translate(-50%, -50%);
+    top: 45%;
+    left: 50%;
+    font-size: 150px;
+    color: #adb5bd;
 `
 
+const TextWrap = styled.div`
+    position: fixed;
+    width: 500px;
+    transform: translate(-50%, -50%);
+    left: 60%;
+    top: 80%;
+    text{
+        font-weight: bolder;
+        font-size: 40px;
+        color: #adb5bd;
+    }
+`
 
 export default function PostView(props) {
 
@@ -49,6 +90,15 @@ export default function PostView(props) {
         <MainContainer>
             <PostContainer>
                 <RelativeContainer>
+                    <TitleContainer>
+                        Upload File
+                    </TitleContainer>
+                    <DragDropContainer >
+                        <SFaPlus />
+                        <TextWrap>
+                            <text>Drag & Drop file here!</text>
+                        </TextWrap>
+                    </DragDropContainer>
                     <ButtonWrapper>
                         <FaRegTimesCircle onClick={e => props.setView(false)} />
                     </ButtonWrapper>
