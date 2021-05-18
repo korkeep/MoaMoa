@@ -9,10 +9,9 @@ def lambda_handler(event, context):
         Bucket='khu-static-s3',
         Key='IU.PNG',
     )
-    
     image = response['Body'].read()
-    
-    #Header Type: image/png, image/jpeg, image/jpg, video/avi, video/mp4, music/mp3, etc/*
+
+    #Header Type: image/png, image/jpeg, video/mp4, music/mp3, etc/*
     return {
         'headers': { "Content-Type": "image/png" },
         'statusCode': 200,
