@@ -8,8 +8,8 @@ import PostView from '../components/postView'
 const MainContainer = styled.div`
     position: fixed;
     width: 100px;
-    right: 0;
-    bottom: 5%;
+    right: 0.5%;
+    bottom: 2%;
 `
 
 const ButtonWrapper = styled.div`
@@ -20,11 +20,25 @@ const ButtonWrapper = styled.div`
     margin: 10px 20px;
     line-height: 60px;
     text-align: center;
-    border: 1px solid black;
     border-radius: 30px;
     z-index: 998;
+    box-shadow: 2px 1px 7px 1px rgba(0, 0, 0, 0.4);
+    &:hover { 
+        background-color: #e9ecef;
+     };
+     cursor: pointer;
+`
+const SFaPlus = styled(FaPlus)`
+    font-size:30px;
+    padding-top: 15px;
+    color: #343a40;
 `
 
+const SFaInbox = styled(FaInbox)`
+    font-size:30px;
+    padding-top: 15px;
+    color: #343a40;
+`
 export default function SideBar() {
     const [is_postview, setIsPostview] = useState(false)
     const [is_storeview, setIsStoreview] = useState(false)
@@ -33,10 +47,10 @@ export default function SideBar() {
         <>
             <MainContainer>
                 <ButtonWrapper onClick={e => setIsPostview(true)}>
-                    <FaPlus />
+                    <SFaPlus />
                 </ButtonWrapper>
                 <ButtonWrapper onClick={e => setIsStoreview(true)}>
-                    <FaInbox />
+                    <SFaInbox />
                 </ButtonWrapper>
             </MainContainer>
             {is_postview && <PostView setView={setIsPostview}/>}
