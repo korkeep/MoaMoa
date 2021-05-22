@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { FaRegTimesCircle } from 'react-icons/fa'
+import { useSelector, useDispatch } from 'react-redux'
+
+import StoreBlock from './storeBlock'
 
 const MainContainer = styled.div`
     height: 100%;
@@ -40,10 +43,35 @@ const ButtonWrapper = styled.div`
     font-size: 32px;
 `
 
+const StoreContainer = styled.div`
+    width: 980px;
+    height: 80vh;
+    overflow-y: auto;
+`
+
 
 export default function StoreView(props) {
-
-    // ImageView 클릭시 API 기능 구현 필요
+    const { contents } = useSelector(state => state.store)
+    // const store_list = contents.map(x => <StoreBlock props={x}/>)
+    const store_list = [
+        <StoreBlock
+            type="Image"
+            id={1}
+            title="이미지 1"
+            src="/Logo.png" />,
+        <StoreBlock
+            type="etc"
+            id={2}
+            title="파일 1" />,
+        <StoreBlock
+            type="etc"
+            id={3}
+            title="파일 1" />,
+        <StoreBlock
+            type="etc"
+            id={4}
+            title="파일 1" />
+    ]
 
     return (
         <MainContainer>
@@ -52,6 +80,9 @@ export default function StoreView(props) {
                     <ButtonWrapper>
                         <FaRegTimesCircle onClick={e => props.setView(false)} />
                     </ButtonWrapper>
+                    <StoreContainer>
+                        {store_list}
+                    </StoreContainer>
                 </RelativeContainer>
             </PostContainer>
         </MainContainer>
