@@ -3,7 +3,9 @@ Store에 들어가는 객체 attribute
 type: Image, Video, Music, Etc
 id: content id
 title: 타이틀
-image: 썸네일 이미지, Music, Video는
+src: 썸네일 이미지 링크, Music, Video는 없음
+main_tag: 메인태그
+sub_tags: 서브 태그 배열
 */
 
 import { createStore } from "redux"

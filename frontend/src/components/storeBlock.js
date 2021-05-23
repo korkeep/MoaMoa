@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { FaFile, FaMinus } from 'react-icons/fa'
+import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
+
+import { STORE_DELETE } from '../redux/store'
 
 const MainContainer = styled.div`
     width: 900px;
@@ -22,12 +25,14 @@ const ImageContainer = styled.div`
     height: 200px;
 
     img {
-        max-width: 200px;
-        max-height: 200px;
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
     }
     svg {
         width: 200px;
         height: 200px;
+        object-fit: cover;
     }
 `
 
@@ -46,7 +51,7 @@ const TitleContainer = styled.div`
 const TypeContainer = styled.div`
     span {
         margin-left: 8px;
-        padding: 3px 6px;
+        padding: 4px 8px;
         font-size: 14px;
         border-radius: 10px;
         background-color: black;
@@ -63,6 +68,20 @@ const ButtonWrapper = styled.div`
     font-size: 24px;
 `
 
+const ButtonContainer = styled.div`
+    margin: 8px;
+    span {
+        font-size: 14px;
+        border: 1px solid #888888;
+        border-radius: 10px;
+        padding: 4px 8px;
+        margin-right: 8px;
+    }
+    span.main {
+        border: 1px solid black;
+    }
+`
+
 const type_to_korean = (type) => {
     switch (type) {
         case "Image":
@@ -77,7 +96,7 @@ const type_to_korean = (type) => {
 }
 
 export default function StoreBlock(props) {
-    const { type, id, title, src } = props
+    const { type, id, summary, main_tag, sub_tags, src, index, onClickFunction } = props
     let image = props.image
     
     if (type === "Music" || type === "etc") {
@@ -85,23 +104,35 @@ export default function StoreBlock(props) {
     } else {
         image = <img src={src} />
     }
+    const tags = sub_tags.map(x => <span>{`# ${x}`}</span>)
+
+    const dispatch = useDispatch()
+    const removeElement = () => {
+        if (window.confirm("정말 삭제 하시겠습니까?")) {
+            dispatch({type: STORE_DELETE, index: index})
+        }
+    }
 
     return (
         <MainContainer>
             <RelativeContainer>
-                <ButtonWrapper>
+                <ButtonWrapper onClick={removeElement}>
                     <FaMinus />
                 </ButtonWrapper>
-                <ImageContainer>
+                <ImageContainer onClick={e => onClickFunction(id)}>
                     {image}
                 </ImageContainer>
                 <ContentContainer>
                     <TitleContainer>
-                        {title}
+                        {summary}
                     </TitleContainer>
                     <TypeContainer>
                         <span>{type_to_korean(type)}</span>
                     </TypeContainer>
+                    <ButtonContainer>
+                        <span className="main">{`# ${main_tag}`}</span>
+                        {tags}
+                    </ButtonContainer>
                 </ContentContainer>
             </RelativeContainer>
         </MainContainer>

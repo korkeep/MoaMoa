@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import SEO from '../../components/SEO';
 import Image from '../../components/image';
@@ -38,6 +39,7 @@ export default function ImagePage() {
   const [index, setIndex] = useState(-1); // Image View 가 있는 인덱스 번호 저장, -1이면 꺼진다.
   const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
   const [loading, setLoading] = useState(false); // 로딩 중인지 아닌지
+  const [query, setQuery] = useState(new URLSearchParams(window.location.search).get('query') || null);
 
   /*function returnFunction(index) {
         function onClickImage(e) {
@@ -56,69 +58,18 @@ export default function ImagePage() {
       templist.push(
         <ImageWrapper>
           <Image
+            type="Image"
             key={page * 20 + i}
             onClickFunction={setIndex}
             id={page * 20 + i}
+            summary={`이미지 ${page * 20 + i}`}
+            main_tag={"메인태그"}
+            sub_tags={["태그 1", "태그 2"]}
             src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
           />
         </ImageWrapper>
       );
     }
-    //테스트용 샘플코드(지우셔도 됩니다.)
-    /*
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg" 
-                id = "0"
-                key = "0"
-                onClickFunction={setIndex}
-                />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2021/02/03/13/54/cupcake-5978060__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2019/06/05/10/34/mimosa-4253396__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2020/10/08/17/39/waves-5638587__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2019/01/30/11/17/zebra-3964360__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2021/02/01/13/37/cars-5970663__340.png" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2021/02/03/13/54/cupcake-5978060__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2019/06/05/10/34/mimosa-4253396__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2020/10/08/17/39/waves-5638587__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2019/01/30/11/17/zebra-3964360__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2021/02/01/13/37/cars-5970663__340.png" />
-        )
-        */
     setImages([...images, ...templist]);
     setLoading(false);
   };
@@ -133,9 +84,15 @@ export default function ImagePage() {
     }
   };
 
+  const queryStringChange = () => {
+    setQuery(new URLSearchParams(window.location.search).get('query'))
+    console.log(query)
+  }
+
   useEffect(() => {
     getImage();
   }, []);
+
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -144,6 +101,13 @@ export default function ImagePage() {
       window.removeEventListener('scroll', handleScroll);
     };
   });
+
+  useEffect(() => {
+    window.addEventListener('hashchange', queryStringChange)
+    return () => {
+      window.removeEventListener('hashchange', queryStringChange)
+    }
+  })
 
   return (
     <>

@@ -9,7 +9,7 @@ const MainContainer = styled.div`
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 2000;
   background-color: rgba(0, 0, 0, 0.3);
 `;
 
@@ -32,7 +32,7 @@ const PostContainer = styled.div`
   height: 80vh;
   width: 100%;
   max-width: 1080px;
-  z-index: 1001;
+  z-index: 2001;
   margin: auto;
   background-color: white;
 
