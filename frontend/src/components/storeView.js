@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { FaRegTimesCircle, FaTrash } from 'react-icons/fa'
+import { FaRegTimesCircle, FaTrash, FaDownload } from 'react-icons/fa'
 import { useSelector, useDispatch } from 'react-redux'
 
 import StoreBlock from './storeBlock'
@@ -111,6 +111,7 @@ export default function StoreView(props) {
                 <PostContainer>
                     <RelativeContainer>
                         <ButtonWrapper>
+                            <FaDownload />
                             <FaTrash onClick={clearStore}/>
                             <FaRegTimesCircle onClick={e => props.setView(false)} />
                         </ButtonWrapper>

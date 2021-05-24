@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components';
 
@@ -53,6 +53,7 @@ export default function Image(props) {
   const { contents } = useSelector(state => state.store)
   const contents_list = Array.from(contents)
   const dispatch = useDispatch()
+
   const storeFunction = () => {
     for (let content of contents_list) {
       if (content.type == props.type && content.id == props.id) {

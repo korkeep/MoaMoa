@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FaRegTimesCircle } from 'react-icons/fa';
+import { FaRegTimesCircle, FaDownload } from 'react-icons/fa';
 import Image from '../components/image';
 
 const MainContainer = styled.div`
@@ -144,8 +144,15 @@ const Line = styled.hr`
 `;
 
 export default function ImageView(props) {
-  // ImageView 클릭시 API 연동 구현 필요
+  // API 연동 전 임시
+  const type = "Image"
+  const id = props.index
+  const summary = "테스트 이미지"
+  const main_tag = "메인 태그"
+  const sub_tags = ["태그 1", "태그 2"]
+  const src =" https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
 
+  // ImageView 클릭시 API 연동 구현 필요
   return (
     <MainContainer>
       <PostContainer>
@@ -154,8 +161,13 @@ export default function ImageView(props) {
           <Line />
           <ImageWrapper>
             <Image
-              id={props.index}
-              src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
+              type={type}
+              id={id}
+              summary={summary}
+              main_tag={main_tag}
+              sub_tags={sub_tags}
+              src={src}
+              onClickFunction={(id) => null}
             />
           </ImageWrapper>
           <InfoContainer>
@@ -175,6 +187,7 @@ export default function ImageView(props) {
             </CommentContainer>
           </InfoContainer>
           <ButtonWrapper>
+            <FaDownload />
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>
         </RelativeContainer>
