@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import store from "./store";
+import query from "./query"
 
 const persistConfig = {
     key: 'moamoa',
@@ -10,7 +11,8 @@ const persistConfig = {
 }
 
 const reducer = combineReducers({
-    store
+    store,
+    query
 })
 
 const persist_reducer = persistReducer(persistConfig, reducer)

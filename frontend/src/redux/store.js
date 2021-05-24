@@ -8,9 +8,6 @@ main_tag: 메인태그
 sub_tags: 서브 태그 배열
 */
 
-import { createStore } from "redux"
-
-
 const initState = {
     contents: []
 }

@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink, useHistory } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
+
+import { QUERY_CHANGE } from '../redux/query'
 
 
 // 헤더 사이즈
@@ -118,14 +121,20 @@ const AirContainer = styled.div`
 `
 
 export default function Header() {
-    const [query, setQuery] = useState('')
+    const [temp_query, setTempQuery] = useState('')
     const history = useHistory()
+    const dispatch = useDispatch()
+    const { query } = useSelector(state => state.query)
     const query_string = query === '' ? '' : `?query=${query}`
 
     function onMainClick(e) {
-        setQuery('')
+        dispatch({type: QUERY_CHANGE, query: ''})
         history.push('/image')
     }
+
+    useEffect(() => {
+        dispatch({type: QUERY_CHANGE, query: ''})
+    }, []);
 
     return (
         <>
@@ -137,18 +146,19 @@ export default function Header() {
                 <SearchContainer>
                     <input
                     type="text"
-                    value={query}
-                    onChange={e => setQuery(e.target.value)}
+                    value={temp_query}
+                    onChange={e => setTempQuery(e.target.value)}
                     onKeyPress={e => {
                         if (e.key === "Enter") {
-                            if (query === '') {
+                            if (temp_query === '') {
                                 alert("검색어를 입력 해 주세요.")
                                 return
                             }
                             const params = new URLSearchParams({
-                                query: query
+                                query: temp_query
                             })
                             history.push('?' + params.toString())
+                            dispatch({type: QUERY_CHANGE, query: temp_query})
                         }
                     }}
                     placeholder="search"/>
