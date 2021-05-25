@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaRegTimesCircle, FaDownload } from 'react-icons/fa';
+import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay } from 'react-icons/fa';
 import Image from '../components/image';
 
 const MainContainer = styled.div`
@@ -55,6 +55,9 @@ const ButtonWrapper = styled.div`
   right: 1%;
   padding: 8px;
   font-size: 32px;
+  svg {
+    padding: 4px;
+  }
 `;
 
 const ImageWrapper = styled.div`
@@ -80,59 +83,33 @@ const HashTagContainer = styled.div`
   padding-left: 10px;
   width: 100%;
   height: 10%;
-  margin-top: 15%;
+  margin-top: 100px;
   font-size: 20px;
   font-weight: bolder;
 `;
 
 const HashTagWrap = styled.div`
-  padding-left: 10px;
+  padding-left: 4px;
   padding-top: 10px;
-  color: #4dabf7;
   font-weight: bold;
-  font-size: 15px;
 `;
 
-const CommentContainer = styled.div`
+const ContentContainer = styled.div`
   padding-left: 10px;
   width: 100%;
   height: 60%;
   font-size: 20px;
   font-weight: bolder;
 `;
-const CommentWrap = styled.div`
+const ContentWrap = styled.div`
+  font-size: 14px;
   width: 93%;
   height: 85%;
   margin-left: 3px;
   margin-top: 10px;
   border-radius: 1em;
-  padding-left: 15px;
+  padding: 8px;
   background-color: #fff9db;
-`;
-const CommentBox = styled.div`
-  font-weight: bold;
-  font-size: 15px;
-  padding-top: 10px;
-`;
-
-const InputWrap = styled.div`
-  margin-top: 10px;
-  width: 100%;
-  height: 20%;
-`;
-
-const Input = styled.input`
-  width: 90%;
-  font-size: 18px;
-  padding: 10px;
-  margin: 10px;
-  background: papayawhip;
-  border: none;
-  outline: none;
-  border-radius: 3px;
-  ::placeholder {
-    color: palevioletred;
-  }
 `;
 
 const Line = styled.hr`
@@ -143,6 +120,28 @@ const Line = styled.hr`
   border-top: 2px solid #868e96;
 `;
 
+const ContentWrapper = styled.span`
+  margin: 6px;
+`
+
+const HashTag = styled.span`
+  font-size: 14px;
+  border: 1px solid #888888;
+  border-radius: 10px;
+  padding: 4px 8px;
+  margin-right: 8px;
+
+  &.main_tag {
+    border: 1px solid black;
+  }
+`
+
+const DetailContainer = styled.div`
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #888888;
+`
+
 export default function ImageView(props) {
   // API 연동 전 임시
   const type = "Image"
@@ -151,6 +150,18 @@ export default function ImageView(props) {
   const main_tag = "메인 태그"
   const sub_tags = ["태그 1", "태그 2"]
   const src =" https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
+  const visited = 10
+  const published_date = '2021-05-25'
+
+  const sub_tags_element = sub_tags.map(x => (
+    <HashTag># {x}</HashTag>
+  ))
+
+  // data patch 시 사용
+  useEffect(() => {
+
+  }, [])
+
 
   // ImageView 클릭시 API 연동 구현 필요
   return (
@@ -172,19 +183,20 @@ export default function ImageView(props) {
           </ImageWrapper>
           <InfoContainer>
             <HashTagContainer>
-              HashTag
-              <HashTagWrap>#해시태그</HashTagWrap>
+              <ContentWrapper>HashTag</ContentWrapper>
+              <HashTagWrap>
+                <HashTag className="main_tag">{`# ${main_tag}`}</HashTag>
+                {sub_tags_element}
+              </HashTagWrap>
             </HashTagContainer>
-            <CommentContainer>
-              Comment
-              <CommentWrap>
-                <CommentBox>댓글1</CommentBox>
-                <CommentBox>댓글2</CommentBox>
-              </CommentWrap>
-              <InputWrap>
-                <Input type="text" placeholder="Comment Add..." />
-              </InputWrap>
-            </CommentContainer>
+            <ContentContainer>
+              <ContentWrapper>Content</ContentWrapper>
+              <DetailContainer><FaCalendarDay /> {published_date}</DetailContainer>
+              <DetailContainer><FaEye /> {visited}</DetailContainer>
+              <ContentWrap>
+                {summary}
+              </ContentWrap>
+            </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
             <FaDownload />
