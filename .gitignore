@@ -2,6 +2,6 @@
 rds_config.py
 
 # Does not include python library
-PIL/
-pymysql/
-Pillow-8.2.0.dist-info/
+# PIL/
+# pymysql/
+# Pillow-8.2.0.dist-info/
