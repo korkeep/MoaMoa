@@ -6,6 +6,7 @@ import pymysql
 import get_image
 import post_image
 
+
 #rds settings
 rds_host  = "khu-db.csv5dh63nzdc.ap-northeast-2.rds.amazonaws.com"
 name = rds_config.db_username
@@ -32,6 +33,7 @@ def lambda_handler(event, context):
         },
         'body': 'error'
     }
+    
     # post image
     if 'image' in event:
         res = post_image.post_image(cursor, conn, event['image'],event['summary'],event['main_tag'],event['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
