@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux'
+
 import SEO from '../../components/SEO';
 import Music from '../../components/music';
+import MusicView from '../../components/musicView'
 
 const MainContainer = styled.div`
   width: 92%;
@@ -43,19 +47,15 @@ const ViewsWrapper = styled.div`
   width: 15%;
 `;
 
-export default function ImagePage() {
+export default function MusicPage() {
   const [musics, setmusics] = useState([]); // Image 배열이 담겨 있음
   const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
   const [loading, setLoading] = useState(false); // 로딩 중인지 아닌지
+  const [index, setIndex] = useState(-1);
+  const { query } = useSelector((state) => state.query)  // query 빼오기
+  const music = musics.find(element => element.id === index)
 
-  /*function returnFunction(index) {
-        function onClickImage(e) {
-            setIndex(index)
-        }
-        return onClickImage
-    }*/
-
-  const getImage = async () => {
+  const getMusic = async () => {
     setPage(page + 1);
     setLoading(true);
     let templist = [];
@@ -65,12 +65,17 @@ export default function ImagePage() {
       templist.push(
         <MusicWrapper>
           <Music
+            type="Music"
             key={page * 20 + i}
+            onClickFunction={setIndex}
             id={page * 20 + i}
-            title="좋은날.wav"
-            date="2020-03-14"
-            artist="IU"
-            views="30"
+            artist={`IU`}
+            title={`좋은 날`}
+            date={`2020-01-01`}
+            main_tag={"아이유"}
+            summary={`IU - 좋은 날`}
+            sub_tags={["서브 태그 1", "서브 태그 2"]}
+            views={10}
           />
         </MusicWrapper>
       );
@@ -85,12 +90,12 @@ export default function ImagePage() {
     const clientHeight = document.documentElement.clientHeight;
     if (scrollTop + clientHeight >= scrollHeight && loading === false) {
       // 페이지 끝에 도달하면 추가 데이터를 받아온다
-      getImage();
+      getMusic();
     }
   };
 
   useEffect(() => {
-    getImage();
+    getMusic();
   }, []);
 
   useEffect(() => {
@@ -104,6 +109,12 @@ export default function ImagePage() {
   return (
     <>
       <SEO title="Hello, DropBox!" description="Hello, DropBox!" />
+      {index !== -1 && (
+        <MusicView
+          setIndex={setIndex}
+          index={index}
+          music={music} />
+      )}
       <MainContainer>
         <ColumnWrapper>
           <ArtistWrapper>가수명</ArtistWrapper>{' '}

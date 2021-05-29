@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux'
+
 import SEO from '../../components/SEO';
-import Etc from '../../components/music';
+import Etc from '../../components/etc';
+import EtcView from '../../components/etcView';
 
 const MainContainer = styled.div`
   width: 92%;
   padding-left: 4%;
   padding-top: 2%;
 `;
-const EtcWrapper = styled.div`
+const MusicWrapper = styled.div`
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -43,19 +47,15 @@ const ViewsWrapper = styled.div`
   width: 15%;
 `;
 
-export default function ImagePage() {
-  const [musics, setmusics] = useState([]); // Image 배열이 담겨 있음
+export default function MusicPage() {
+  const [etcs, setEtcs] = useState([]); // Image 배열이 담겨 있음
   const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
   const [loading, setLoading] = useState(false); // 로딩 중인지 아닌지
+  const [index, setIndex] = useState(-1);
+  const { query } = useSelector((state) => state.query)  // query 빼오기
+  const etc = etcs.find(element => element.id === index)
 
-  /*function returnFunction(index) {
-        function onClickImage(e) {
-            setIndex(index)
-        }
-        return onClickImage
-    }*/
-
-  const getImage = async () => {
+  const getEtc = async () => {
     setPage(page + 1);
     setLoading(true);
     let templist = [];
@@ -63,19 +63,24 @@ export default function ImagePage() {
     // 여기는 API 만들어지면 업데이트 하겠습니다.
     for (let i = 0; i < 20; i++) {
       templist.push(
-        <EtcWrapper>
+        <MusicWrapper>
           <Etc
+            type="Etc"
             key={page * 20 + i}
+            onClickFunction={setIndex}
             id={page * 20 + i}
-            title="콘서트일정.docx"
-            date="2020-03-14"
-            artist="IU"
-            views="30"
+            artist={`IU`}
+            title={`콘서트일정.docx`}
+            date={`2020-01-01`}
+            main_tag={"아이유"}
+            summary={`IU - 콘서트일정.docx`}
+            sub_tags={["서브 태그 1", "서브 태그 2"]}
+            views={10}
           />
-        </EtcWrapper>
+        </MusicWrapper>
       );
     }
-    setmusics([...musics, ...templist]);
+    setEtcs([...etcs, ...templist]);
     setLoading(false);
   };
 
@@ -85,12 +90,12 @@ export default function ImagePage() {
     const clientHeight = document.documentElement.clientHeight;
     if (scrollTop + clientHeight >= scrollHeight && loading === false) {
       // 페이지 끝에 도달하면 추가 데이터를 받아온다
-      getImage();
+      getEtc();
     }
   };
 
   useEffect(() => {
-    getImage();
+    getEtc();
   }, []);
 
   useEffect(() => {
@@ -104,14 +109,20 @@ export default function ImagePage() {
   return (
     <>
       <SEO title="Hello, DropBox!" description="Hello, DropBox!" />
+      {index !== -1 && (
+        <EtcView
+          setIndex={setIndex}
+          index={index}
+          etc={etc} />
+      )}
       <MainContainer>
         <ColumnWrapper>
-          <ArtistWrapper>가수명(태그명)</ArtistWrapper>{' '}
+          <ArtistWrapper>가수명</ArtistWrapper>{' '}
           <TitleWrapper>제목</TitleWrapper>{' '}
           <UploadDateWrapper>업로드 날짜</UploadDateWrapper>
           <ViewsWrapper>다운로드수</ViewsWrapper>
         </ColumnWrapper>
-        {musics}
+        {etcs}
       </MainContainer>
     </>
   );

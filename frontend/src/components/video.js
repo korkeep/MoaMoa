@@ -86,6 +86,7 @@ export default function Video(props) {
 
   return (
     <MainContainer>
+        <DownloadButton onClick={() => storeFunction()} />
         <Video_ controls>
             <source src={props.video_src} />
             지원하지 않는 브라우저 입니다.

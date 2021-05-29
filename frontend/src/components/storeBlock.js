@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FaFile, FaMinus } from 'react-icons/fa'
+import { FaFile, FaMinus, FaMusic } from 'react-icons/fa'
 import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 
@@ -82,6 +82,20 @@ const ButtonContainer = styled.div`
     }
 `
 
+const IconContainer = styled.div`
+    width: 200px;
+    height: 200px;
+    position: relative;
+
+    svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+    }
+`
+
 const type_to_korean = (type) => {
     switch (type) {
         case "Image":
@@ -99,8 +113,11 @@ export default function StoreBlock(props) {
     const { type, id, summary, main_tag, sub_tags, src, index, onClickFunction } = props
     let image = props.image
     
-    if (type === "Music" || type === "etc") {
-        image = <FaFile />
+    if (type === "Music") {
+        image = <IconContainer><FaMusic /></IconContainer>
+    }
+    else if (type === "Etc") {
+        image = <IconContainer><FaFile /></IconContainer>
     } else {
         image = <img src={src} />
     }
