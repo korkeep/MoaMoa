@@ -39,13 +39,9 @@ const ImageWrapper = styled.div`
 export default function ImagePage() {
   const [images, setImages] = useState([]); // Image 배열이 담겨 있음
   const [index, setIndex] = useState(-1); // Image View 가 있는 인덱스 번호 저장, -1이면 꺼진다.
-  const [id, setId] = useState(-1);
   const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
   const [loading, setLoading] = useState(false); // 로딩 중인지 아닌지
   const { query } = useSelector((state) => state.query)  // query 빼오기
-
-
-  console.log(query)
 
   const getImage = async () => {
     setPage(page + 1);
@@ -103,7 +99,7 @@ export default function ImagePage() {
       {index !== -1 && (
         <ImageView
           setIndex={setIndex}
-          index={id}
+          index={index}
           image={images} />
       )}
     </>

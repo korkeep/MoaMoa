@@ -104,7 +104,7 @@ export default function StoreBlock(props) {
     } else {
         image = <img src={src} />
     }
-    const tags = sub_tags.map(x => <span>{`# ${x}`}</span>)
+    const tags = sub_tags.map((x, index) => <span key={index}>{`# ${x}`}</span>)
 
     const dispatch = useDispatch()
     const removeElement = () => {

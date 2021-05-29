@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import StoreBlock from './storeBlock'
 import { STORE_CLEAR } from '../redux/store'
 import ImageView from './imageView'
+import VideoView from './videoView'
 
 const MainContainer = styled.div`
     height: 100%;
@@ -106,6 +107,9 @@ export default function StoreView(props) {
         <>  
             {image_index !== -1 && (
                 <ImageView setIndex={setImageIndex} index={image_index} />
+            )}
+            {video_index !== -1 && (
+                <VideoView setIndex={setVideoIndex} index={video_index} />
             )}
             <MainContainer>
                 <PostContainer>

@@ -149,7 +149,7 @@ export default function ImageView(props) {
   const summary = "테스트 이미지"
   const main_tag = "메인 태그"
   const sub_tags = ["태그 1", "태그 2"]
-  const src =" https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
+  const src = "https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
   const visited = 10
   const published_date = '2021-05-25'
 

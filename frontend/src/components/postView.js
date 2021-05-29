@@ -18,7 +18,7 @@ const PostContainer = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 80vh;
+    height: 760px;
     width: 100%;
     max-width: 1080px;
     z-index: 1001;

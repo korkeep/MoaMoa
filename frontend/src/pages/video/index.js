@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux'
+
 import SEO from '../../components/SEO';
 import Image from '../../components/image';
 import VideoView from '../../components/videoView';
 
 const MainContainer = styled.div`
   width: 92%;
-  column-count: 4;
+  column-count: 5;
   column-gap: 2em;
   @media all and (min-width: 768px) and (max-width: 1023px) {
     column-count: 3;
@@ -19,13 +22,12 @@ const MainContainer = styled.div`
   padding-left: 4%;
   padding-top: 2%;
 `;
-
 const ImageWrapper = styled.div`
   overflow: hidden;
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-  width: 300px;
+  min-width: 200px;
   min-height: 100px;
   border-radius: 2em;
   -moz-border-radius: 2em;
@@ -34,20 +36,14 @@ const ImageWrapper = styled.div`
   vertical-align: bottom;
 `;
 
-export default function VideoPage() {
+export default function ImagePage() {
   const [videos, setVideos] = useState([]); // Image 배열이 담겨 있음
   const [index, setIndex] = useState(-1); // Image View 가 있는 인덱스 번호 저장, -1이면 꺼진다.
   const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
   const [loading, setLoading] = useState(false); // 로딩 중인지 아닌지
+  const { query } = useSelector((state) => state.query)  // query 빼오기
 
-  /*function returnFunction(index) {
-        function onClickImage(e) {
-            setIndex(index)
-        }
-        return onClickImage
-    }*/
-
-  const getImage = async () => {
+  const getVideo = async () => {
     setPage(page + 1);
     setLoading(true);
     let templist = [];
@@ -57,11 +53,14 @@ export default function VideoPage() {
       templist.push(
         <ImageWrapper>
           <Image
+            type="Video"
             key={page * 20 + i}
             onClickFunction={setIndex}
             id={page * 20 + i}
-            width="270px"
-            //src = "https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
+            summary={`이미지 ${page * 20 + i}`}
+            main_tag={"메인태그"}
+            sub_tags={["태그 1", "태그 2"]}
+            src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
           />
         </ImageWrapper>
       );
@@ -76,13 +75,14 @@ export default function VideoPage() {
     const clientHeight = document.documentElement.clientHeight;
     if (scrollTop + clientHeight >= scrollHeight && loading === false) {
       // 페이지 끝에 도달하면 추가 데이터를 받아온다
-      getImage();
+      getVideo();
     }
   };
 
   useEffect(() => {
-    getImage();
+    getVideo();
   }, []);
+
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -97,7 +97,10 @@ export default function VideoPage() {
       <SEO title="Hello, DropBox!" description="Hello, DropBox!" />
       <MainContainer>{videos}</MainContainer>
       {index !== -1 && (
-        <VideoView setIndex={setIndex} index={index} image={videos} />
+        <VideoView
+          setIndex={setIndex}
+          index={index}
+          image={videos} />
       )}
     </>
   );
