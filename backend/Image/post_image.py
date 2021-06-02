@@ -17,7 +17,8 @@ def post_image(cursor, conn, file, explain, singer, hashtag, date):
         f.write(data)
     
     # make 썸네일
-    t_file = Image.open(file)
+    filename = "/tmp/o_file.png"
+    t_file = Image.open(filename)
     t_file.thumbnail(tuple(x / 2 for x in t_file.size))
     t_file.save('/tmp/t_file.png')
 
