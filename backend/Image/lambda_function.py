@@ -29,7 +29,9 @@ def lambda_handler(event, context):
     res = {
         'statusCode': 400,
         'headers':{
-            'Content-Type' : "application/json"
+            'Access-Control-Allow-Headers' : 'Content-Type',
+            'Access-Control-Allow-Origin' : "*",
+            'Access-Control-Allow-Methods': "POST,GET"
         },
         'body': 'error'
     }
@@ -38,10 +40,11 @@ def lambda_handler(event, context):
     if 'image' in event:
         res = post_image.post_image(cursor, conn, event['image'],event['summary'],event['main_tag'],event['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one image
-    elif 'pathParameters' in event:
+    elif event['pathParameters']:
         res = get_image.get_one_image(cursor,event['pathParameters']['id'])
     # get all images
     else:
         res = get_image.get_all_images(cursor)
-        
+    
+    
     return res

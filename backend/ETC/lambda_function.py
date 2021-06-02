@@ -28,7 +28,9 @@ def lambda_handler(event, context):
     res = {
         'statusCode': 400,
         'headers':{
-            'Content-Type' : "application/json"
+            "Access-Control-Allow-Headers" : "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST,GET"
         },
         'body': 'error'
     }
@@ -37,7 +39,7 @@ def lambda_handler(event, context):
     if 'etc' in event:
         res = post_etc.post_etc(cursor, conn, event['etc'],event['summary'],event['main_tag'],event['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one etc
-    elif 'pathParameters' in event:
+    elif event['pathParameters']:
         res = get_etc.get_one_etc(cursor,event['pathParameters']['id'])
     # get all etcs
     else:
