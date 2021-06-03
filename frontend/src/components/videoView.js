@@ -143,20 +143,15 @@ const Line = styled.hr`
   border-top: 2px solid #868e96;
 `;
 
-export default function ImageView(props) {
-  // ImageView 클릭시 API 연동 구현 필요
-
+export default function VideoView(props) {
   return (
     <MainContainer>
       <PostContainer>
         <RelativeContainer>
-          <TitleContainer>Image View</TitleContainer>
+          <TitleContainer>Video View</TitleContainer>
           <Line />
           <ImageWrapper>
-            <Image
-              id={props.index}
-              src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
-            />
+            <Image id={props.index} src={props.image[props.index].src} />
           </ImageWrapper>
           <InfoContainer>
             <HashTagContainer>

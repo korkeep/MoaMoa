@@ -47,4 +47,4 @@ def post_image(cursor, conn, file, explain, singer, hashtag, date):
     return {
         'statusCode': 200,
         'body': json.dumps(str(index))
-    }
+    } 
