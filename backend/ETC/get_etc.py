@@ -23,9 +23,6 @@ def get_all_etcs(cursor):
     
     return {
         'statusCode': 200,
-        'headers':{
-            'Content-Type' : "application/json"
-        },
         'body': json.dumps(res)
     }
     
@@ -52,8 +49,5 @@ def get_one_etc(cursor, id):
     
     return {
         'statusCode': 200,
-        'headers':{
-            'Content-Type' : "application/json"
-        },
         'body': json.dumps(res)
     }

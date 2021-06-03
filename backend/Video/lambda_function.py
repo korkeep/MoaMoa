@@ -5,6 +5,7 @@ import rds_config
 import pymysql
 import get_video
 import post_video
+import json
 
 #rds settings
 rds_host  = "khu-db.csv5dh63nzdc.ap-northeast-2.rds.amazonaws.com"
@@ -27,16 +28,12 @@ def lambda_handler(event, context):
     cursor = conn.cursor()
     res = {
         'statusCode': 400,
-        'headers':{
-            'Access-Control-Allow-Headers' : 'Content-Type',
-            'Access-Control-Allow-Origin' : "*",
-            'Access-Control-Allow-Methods': "POST,GET"
-        },
         'body': 'error'
     }
     # post video
-    if 'video' in event:
-        res = post_video.post_video(cursor, conn, event['video'],event['summary'],event['main_tag'],event['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
+    if event['httpMethod'] == 'POST':
+        body = json.loads(event['body'])
+        res = post_video.post_video(cursor, conn, body['video'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one video
     elif event['pathParameters']:
         res = get_video.get_one_video(cursor,event['pathParameters']['id'])
@@ -44,4 +41,10 @@ def lambda_handler(event, context):
     else:
         res = get_video.get_all_videos(cursor)
         
+    res['headers'] = {
+        'Content-Type' : "application/json",
+        'Access-Control-Allow-Headers' : 'Content-Type',
+        'Access-Control-Allow-Origin' : "*",
+        'Access-Control-Allow-Methods': "POST,GET"
+    }
     return res

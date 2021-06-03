@@ -5,6 +5,7 @@ import rds_config
 import pymysql
 import get_etc
 import post_etc
+import json
 
 #rds settings
 rds_host  = "khu-db.csv5dh63nzdc.ap-northeast-2.rds.amazonaws.com"
@@ -27,22 +28,23 @@ def lambda_handler(event, context):
     cursor = conn.cursor()
     res = {
         'statusCode': 400,
-        'headers':{
-            "Access-Control-Allow-Headers" : "Content-Type",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST,GET"
-        },
         'body': 'error'
     }
-    
     # post etc
-    if 'etc' in event:
-        res = post_etc.post_etc(cursor, conn, event['etc'],event['summary'],event['main_tag'],event['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
+    if event['httpMethod'] == 'POST':
+        body = json.loads(event['body'])
+        res = post_etc.post_etc(cursor, conn, body['etc'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one etc
     elif event['pathParameters']:
         res = get_etc.get_one_etc(cursor,event['pathParameters']['id'])
     # get all etcs
     else:
         res = get_etc.get_all_etcs(cursor)
-        
+    
+    res['headers'] = {
+        'Content-Type' : 'application/json',
+        'Access-Control-Allow-Headers' : 'Content-Type',
+        'Access-Control-Allow-Origin' : "*",
+        'Access-Control-Allow-Methods': "POST,GET"
+    }
     return res
