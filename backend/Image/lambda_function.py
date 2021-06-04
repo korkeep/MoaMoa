@@ -5,7 +5,7 @@ import rds_config
 import pymysql
 import get_image
 import post_image
-
+import json
 
 #rds settings
 rds_host  = "khu-db.csv5dh63nzdc.ap-northeast-2.rds.amazonaws.com"
@@ -28,17 +28,13 @@ def lambda_handler(event, context):
     cursor = conn.cursor()
     res = {
         'statusCode': 400,
-        'headers':{
-            'Access-Control-Allow-Headers' : 'Content-Type',
-            'Access-Control-Allow-Origin' : "*",
-            'Access-Control-Allow-Methods': "POST,GET"
-        },
         'body': 'error'
     }
     
     # post image
-    if 'image' in event:
-        res = post_image.post_image(cursor, conn, event['image'],event['summary'],event['main_tag'],event['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
+    if event['httpMethod'] == 'POST':
+        body = json.loads(event['body'])
+        res = post_image.post_image(cursor, conn, body['image'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one image
     elif event['pathParameters']:
         res = get_image.get_one_image(cursor,event['pathParameters']['id'])
@@ -46,5 +42,10 @@ def lambda_handler(event, context):
     else:
         res = get_image.get_all_images(cursor)
     
-    
+    res['headers'] = {
+        'Content-Type' : "application/json",
+        'Access-Control-Allow-Headers' : 'Content-Type',
+        'Access-Control-Allow-Origin' : "*",
+        'Access-Control-Allow-Methods': "POST,GET"
+    }
     return res

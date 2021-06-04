@@ -10,7 +10,7 @@ def get_all_videos(cursor):
     
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link,t_link] = data
+        [index,explain,singer,hashtag,view,date,_,t_link] = data
         node = {
             'id':index,
             'video':t_link,
@@ -23,9 +23,6 @@ def get_all_videos(cursor):
     
     return {
         'statusCode': 200,
-        'headers':{
-            'Content-Type' : "application/json"
-        },
         'body': json.dumps(res)
     }
     
@@ -39,7 +36,7 @@ def get_one_video(cursor, id):
     
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link,t_link] = data
+        [index,explain,singer,hashtag,view,date,o_link,_] = data
         node = {
             'id':index,
             'video':o_link,
@@ -52,8 +49,5 @@ def get_one_video(cursor, id):
     
     return {
         'statusCode': 200,
-        'headers':{
-            'Content-Type' : "application/json"
-        },
         'body': json.dumps(res)
     }
