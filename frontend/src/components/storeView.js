@@ -7,6 +7,8 @@ import StoreBlock from './storeBlock'
 import { STORE_CLEAR } from '../redux/store'
 import ImageView from './imageView'
 import VideoView from './videoView'
+import MusicView from './musicView'
+import EtcView from './etcView'
 
 const MainContainer = styled.div`
     height: 100%;
@@ -103,6 +105,33 @@ export default function StoreView(props) {
         }
     }
 
+    const download_all = (e) => {
+        let url_list = []
+        for (let i = 0; i < contents.length; i++) {
+            if (contents[i].type === "Image") {
+                url_list.push(contents[i].src)
+            } else if (contents[i].type === "Video") {
+                url_list.push(contents[i].video)
+            } else if (contents[i].type === "Music") {
+                url_list.push(contents[i].music)
+            } else {
+                url_list.push(contents[i].file)
+            }
+        }
+        var link = document.createElement('a');
+
+        link.setAttribute('download', null);
+        link.style.display = 'none';
+
+        document.body.appendChild(link);
+
+        for (let i = 0; i < url_list.length; i++) {
+            link.setAttribute('href', url_list[i]);
+            link.click();
+        }
+        document.body.removeChild(link);
+    }
+
     return (
         <>  
             {image_index !== -1 && (
@@ -111,11 +140,17 @@ export default function StoreView(props) {
             {video_index !== -1 && (
                 <VideoView setIndex={setVideoIndex} index={video_index} />
             )}
+            {music_index !== -1 && (
+                <MusicView setIndex={setMusicIndex} index={music_index} />
+            )}
+            {file_index !== -1 && (
+                <EtcView setIndex={setFileIndex} index={file_index} />
+            )}
             <MainContainer>
                 <PostContainer>
                     <RelativeContainer>
                         <ButtonWrapper>
-                            <FaDownload />
+                            <FaDownload onClick={download_all} />
                             <FaTrash onClick={clearStore}/>
                             <FaRegTimesCircle onClick={e => props.setView(false)} />
                         </ButtonWrapper>

@@ -72,7 +72,6 @@ export default function VideoPage() {
         )
       )
       setVideos([...videos, ...video_list]);
-      setLoading(false);
       setPage(page + 1)
       return
     } catch (err) {
@@ -85,7 +84,7 @@ export default function VideoPage() {
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = document.documentElement.scrollTop;
     const clientHeight = document.documentElement.clientHeight;
-    if (scrollTop + clientHeight >= scrollHeight && loading === false) {
+    if (scrollTop + clientHeight >= scrollHeight) {
       // 페이지 끝에 도달하면 추가 데이터를 받아온다
       await getVideo();
     }
