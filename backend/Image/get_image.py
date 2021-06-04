@@ -2,8 +2,11 @@ import json
 
 # GET ALL IMAGES
 # /image/list
-def get_all_images(cursor):
-    sql = "SELECT * FROM photo;"
+def get_all_images(cursor, tag=None):
+    if tag:
+        sql = "SELECT * FROM photo WHERE 0<>LOCATE('%s',hashtag)" %(tag)
+    else:
+        sql = "SELECT * FROM photo;"
         
     cursor.execute(sql)
     buff = cursor.fetchall()
