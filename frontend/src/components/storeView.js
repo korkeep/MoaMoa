@@ -66,7 +66,7 @@ export default function StoreView(props) {
     const [music_index, setMusicIndex] = useState(-1); // Music View 가 있는 인덱스 번호 저장, -1이면 꺼진다.
     const [file_index, setFileIndex] = useState(-1); // File View 가 있는 인덱스 번호 저장, -1이면 꺼진다.
 
-    let store_list = Array.from(contents).map((x, index) => {
+    let store_list = contents.map((x, index) => {
             let onClickFunction
             switch (x.type) {
                 case "Image":
@@ -89,7 +89,7 @@ export default function StoreView(props) {
                 id={x.id}
                 summary={x.summary}
                 main_tag={x.main_tag}
-                sub_tags={Array.from(x.sub_tags)}
+                sub_tags={x.sub_tags}
                 src={x.src}
                 index={index}
                 onClickFunction={onClickFunction}

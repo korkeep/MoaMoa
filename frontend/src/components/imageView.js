@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay } from 'react-icons/fa';
+import { Link } from 'react-router-dom'
+
 import Image from '../components/image';
+import { server_ip } from '../setting/env';
+import axios from 'axios';
 
 const MainContainer = styled.div`
   height: 100%;
@@ -144,22 +148,29 @@ const DetailContainer = styled.div`
 
 export default function ImageView(props) {
   // API 연동 전 임시
-  const type = "Image"
-  const id = props.index
-  const summary = "테스트 이미지"
-  const main_tag = "메인 태그"
-  const sub_tags = ["태그 1", "태그 2"]
-  const src = "https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4"
-  const visited = 10
-  const published_date = '2021-05-25'
+  const { index } = props
+  const type = 'Image'
+  const [image, setImage] = useState({})
+  
+  const getImage = async () => {
+    try {
+      const image_response = await axios.get(`${server_ip}/image/view/${index}`)
+      setImage(image_response.data[0])
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
-  const sub_tags_element = sub_tags.map(x => (
-    <HashTag># {x}</HashTag>
-  ))
+  let sub_tags_element = []
+  if (image.sub_tags !== undefined) {
+    sub_tags_element = image.sub_tags.map(x => (
+      <Link to={`/image?query=${x}`}><HashTag># {x}</HashTag></Link>
+    ))
+  }
 
   // data patch 시 사용
-  useEffect(() => {
-
+  useEffect(async () => {
+    getImage()
   }, [])
 
 
@@ -173,11 +184,11 @@ export default function ImageView(props) {
           <ImageWrapper>
             <Image
               type={type}
-              id={id}
-              summary={summary}
-              main_tag={main_tag}
-              sub_tags={sub_tags}
-              src={src}
+              id={index}
+              summary={image.summary}
+              main_tag={image.main_tag}
+              sub_tags={image.sub_tags}
+              src={image.image}
               onClickFunction={(id) => null}
             />
           </ImageWrapper>
@@ -185,16 +196,16 @@ export default function ImageView(props) {
             <HashTagContainer>
               <ContentWrapper>HashTag</ContentWrapper>
               <HashTagWrap>
-                <HashTag className="main_tag">{`# ${main_tag}`}</HashTag>
+              <a href={`/image?query=${image.main_tag}`}><HashTag className="main_tag">{`# ${image.main_tag}`}</HashTag></a>
                 {sub_tags_element}
               </HashTagWrap>
             </HashTagContainer>
             <ContentContainer>
               <ContentWrapper>Content</ContentWrapper>
-              <DetailContainer><FaCalendarDay /> {published_date}</DetailContainer>
-              <DetailContainer><FaEye /> {visited}</DetailContainer>
+              <DetailContainer><FaCalendarDay /> {image.published_date}</DetailContainer>
+              <DetailContainer><FaEye /> {image.visited}</DetailContainer>
               <ContentWrap>
-                {summary}
+                {image.summary}
               </ContentWrap>
             </ContentContainer>
           </InfoContainer>

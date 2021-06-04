@@ -172,6 +172,7 @@ export default function PostView(props) {
     const [summary, setSummary] = useState('')
     const [hash_tag, setHashTag] = useState('')
     const [hash_tags, setHashTags] = useState([])
+    const [type, setType] = useState('')
     let preview, message
 
     if (acceptedFile !== null) {
@@ -179,6 +180,7 @@ export default function PostView(props) {
         message = acceptedFile[0].path
         if (acceptedFile[0].type.startsWith('image')) {
             preview = <CustomImage src={URL.createObjectURL(acceptedFile[0])} />
+            setType('Image')
         } else if (acceptedFile[0].type.startsWith('video')) {
             preview = (
                 <CustomVideo controls>
@@ -186,13 +188,16 @@ export default function PostView(props) {
                     지원하지 않는 브라우저 입니다.
                 </CustomVideo>
             )
+            setType('Video')
         } else if (acceptedFile[0].type.startsWith('audio')) {
             preview = <audio controls src={URL.createObjectURL(acceptedFile[0])}>
                             Your browser does not support the
                             <code>audio</code> element.
                         </audio>
+            setType('Audio')
         } else {
             preview = <CustomImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFpqOXYHlS5UFVgfKan5ihUBktkCDPCNTBnQ&usqp=CAU" />
+            setType('Etc')
         }
     } else {
         preview = <></>
@@ -204,6 +209,42 @@ export default function PostView(props) {
             setHashTags([...hash_tags.slice(0, index), ...hash_tags.slice(index + 1)])
         }}/></HashTag>
     ))
+
+    const postFile = async () => {
+        if (type === '') {
+            alert('파일을 올려주세요!')
+            return
+        }
+
+        try {
+            let data = {
+                summary: summary,
+                main_tag: hash_tags[0],
+                sub_tags: hash_tag.slice(1)
+            }
+            switch (type) {
+                case 'Image':
+                    data.image = btoa(unescape(encodeURIComponent(acceptedFile[0])))
+                    break;
+                case 'Video':
+                    data.video = btoa(unescape(encodeURIComponent(acceptedFile[0])))
+                    break;
+                case 'Audio':
+                    data.music = btoa(unescape(encodeURIComponent(acceptedFile[0])))
+                    break;
+                case 'Etc':
+                    data.file = btoa(unescape(encodeURIComponent(acceptedFile[0])))
+                    break;
+                default:
+                    break;
+            }
+
+            // 창 OFF
+            props.setView(false)
+        } catch (err) {
+
+        }
+    }
 
     return (
         <MainContainer>

@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { NavLink, useHistory } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
-
-import { QUERY_CHANGE } from '../redux/query'
 
 
 // 헤더 사이즈
@@ -121,28 +118,22 @@ const AirContainer = styled.div`
 `
 
 export default function Header() {
-    const [temp_query, setTempQuery] = useState('')
-    const history = useHistory()
-    const dispatch = useDispatch()
-    const { query } = useSelector(state => state.query)
-    const query_string = query === '' ? '' : `?query=${query}`
-
-    function onMainClick(e) {
-        dispatch({type: QUERY_CHANGE, query: ''})
-        history.push('/image')
-    }
-
-    useEffect(() => {
-        dispatch({type: QUERY_CHANGE, query: ''})
-    }, []);
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('query') === undefined ? '' : urlParams.get('query')
+    const base_url = window.location.origin
+    const path_url = window.location.search.split('?')[0]
+    const query_string = (query === '' || query === null || query === undefined) ? '' : `?query=${query}`
+    const [temp_query, setTempQuery] = useState(query)
 
     return (
         <>
             <MainContainer>
                 <HeaderTop />
-                <LogoContainer onClick={onMainClick}>
-                    <img src = "logo.png"></img>
-                </LogoContainer>
+                <a href={base_url + '/image'}>
+                    <LogoContainer>
+                        <img src="logo.png"></img>
+                    </LogoContainer>
+                </a>
                 <SearchContainer>
                     <input
                     type="text"
@@ -154,11 +145,7 @@ export default function Header() {
                                 alert("검색어를 입력 해 주세요.")
                                 return
                             }
-                            const params = new URLSearchParams({
-                                query: temp_query
-                            })
-                            history.push('?' + params.toString())
-                            dispatch({type: QUERY_CHANGE, query: temp_query})
+                            window.location.href = path_url + (temp_query === '' ? '' : `?query=${temp_query}`)
                         }
                     }}
                     placeholder="search"/>

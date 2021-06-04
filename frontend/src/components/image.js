@@ -15,6 +15,7 @@ const MainContainer = styled.div`
 
 const Figure = styled.div`
   filter: none;
+  
   &:hover {
     filter: grayscale(0.8) blur(2px);
   }
@@ -23,8 +24,9 @@ const Figure = styled.div`
 const Image_ = styled.img`
   object-fit: cover;
   width: 100%;
-  vertical-align: bottom;
+  height: 100%;
 `;
+
 const DownloadButton = styled.div`
   position: absolute;
   z-index: 1;

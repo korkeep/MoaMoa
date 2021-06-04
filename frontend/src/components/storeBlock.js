@@ -121,7 +121,33 @@ export default function StoreBlock(props) {
     } else {
         image = <img src={src} />
     }
-    const tags = sub_tags.map((x, index) => <span key={index}>{`# ${x}`}</span>)
+
+    
+    let tags
+    let type_url
+
+    switch (type) {
+        case "Image":
+            type_url = 'image'
+            break;
+        case "Video":
+            type_url = 'video'
+            break;
+        case "Music":
+            type_url = 'music'
+            break;
+        case "Etc":
+            type_url = 'etc'
+            break;
+        default:
+            break;
+    }
+
+    if (sub_tags !== undefined) {
+        tags = sub_tags.map((x, index) => <a href={`/${type_url}/?query=${x}`}><span key={index}>{`# ${x}`}</span></a>)
+    } else {
+        tags = []
+    }
 
     const dispatch = useDispatch()
     const removeElement = () => {
@@ -147,7 +173,7 @@ export default function StoreBlock(props) {
                         <span>{type_to_korean(type)}</span>
                     </TypeContainer>
                     <ButtonContainer>
-                        <span className="main">{`# ${main_tag}`}</span>
+                        <a href={`/${type_url}/?query=${main_tag}`}><span className="main">{`# ${main_tag}`}</span></a>
                         {tags}
                     </ButtonContainer>
                 </ContentContainer>

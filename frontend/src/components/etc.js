@@ -15,14 +15,26 @@ const MainContainer = styled.div`
 
 const TitleWrapper = styled.div`
   width: 40%;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const ArtistWrapper = styled.div`
   width: 10%;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const UploadDateWrapper = styled.div`
   width: 20%;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const ViewsWrapper = styled.div``;
@@ -62,7 +74,7 @@ export default function Etc(props) {
       <TitleWrapper onClick={(e) => props.onClickFunction(props.id)}>{props.title}</TitleWrapper>
       <UploadDateWrapper onClick={(e) => props.onClickFunction(props.id)}>{props.date}</UploadDateWrapper>
       <ViewsWrapper onClick={(e) => props.onClickFunction(props.id)}>{props.views}</ViewsWrapper>
-      <DownloadButton onClick={() => storeFunction()}>Download</DownloadButton>
+      <DownloadButton onClick={() => storeFunction()}>담기</DownloadButton>
     </MainContainer>
   );
 }
