@@ -36,12 +36,15 @@ def lambda_handler(event, context):
         body = json.loads(event['body'])
         res = post_image.post_image(cursor, conn, body['image'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one image
-    elif event['pathParameters']:
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/image/view/{id+}':
         res = get_image.get_one_image(cursor,event['pathParameters']['id'])
     # get all images
-    else:
-        res = get_image.get_all_images(cursor)
-    
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/image/list':
+        if event['queryStringParameters']:
+            res = get_image.get_all_images(cursor, event['queryStringParameters']['query'])
+        else:
+            res = get_image.get_all_images(cursor)
+
     res['headers'] = {
         'Content-Type' : "application/json",
         'Access-Control-Allow-Headers' : 'Content-Type',

@@ -35,11 +35,14 @@ def lambda_handler(event, context):
         body = json.loads(event['body'])
         res = post_etc.post_etc(cursor, conn, body['etc'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one etc
-    elif event['pathParameters']:
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/etc/view/{id+}':
         res = get_etc.get_one_etc(cursor,event['pathParameters']['id'])
     # get all etcs
-    else:
-        res = get_etc.get_all_etcs(cursor)
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/etc/list':
+        if event['queryStringParameters']:
+            res = get_etc.get_all_etcs(cursor,event['queryStringParameters']['query'])
+        else:
+            res = get_etc.get_all_etcs(cursor)
     
     res['headers'] = {
         'Content-Type' : 'application/json',

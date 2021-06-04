@@ -35,11 +35,14 @@ def lambda_handler(event, context):
         body = json.loads(event['body'])
         res = post_video.post_video(cursor, conn, body['video'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one video
-    elif event['pathParameters']:
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/video/view/{id+}':
         res = get_video.get_one_video(cursor,event['pathParameters']['id'])
     # get all videos
-    else:
-        res = get_video.get_all_videos(cursor)
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/video/list':
+        if event['queryStringParameters']:
+            res = get_video.get_all_videos(cursor,event['queryStringParameters']['query'])
+        else:
+            res = get_video.get_all_videos(cursor)
         
     res['headers'] = {
         'Content-Type' : "application/json",

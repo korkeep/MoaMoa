@@ -35,11 +35,14 @@ def lambda_handler(event, context):
         body = json.loads(event['body'])
         res = post_music.post_music(cursor, conn, body['music'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one music
-    elif event['pathParameters']:
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/music/view/{id+}':
         res = get_music.get_one_music(cursor,event['pathParameters']['id'])
     # get all musics
-    else:
-        res = get_music.get_all_musics(cursor)
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/music/list':
+        if event['queryStringParameters']:
+            res = get_music.get_all_musics(cursor,event['queryStringParameters']['query'])
+        else:
+            res = get_music.get_all_musics(cursor)
 
     res['headers'] = {
         'Content-Type' : 'applicaion/json',

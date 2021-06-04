@@ -2,8 +2,11 @@ import json
 
 # GET ALL VIDEOS
 # /video/list
-def get_all_videos(cursor):
-    sql = "SELECT * FROM video;"
+def get_all_videos(cursor,tag=None):
+    if tag:
+        sql = "SELECT * FROM video WHERE 0<>LOCATE('%s',hashtag);" %(tag)
+    else:
+        sql = "SELECT * FROM video;"
         
     cursor.execute(sql)
     buff = cursor.fetchall()
