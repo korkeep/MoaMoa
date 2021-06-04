@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay } from 'react-icons/fa';
+import axios from 'axios';
+
+import { server_ip } from '../setting/env';
 import Video from '../components/video';
 
 const MainContainer = styled.div`
@@ -58,6 +61,7 @@ const ButtonWrapper = styled.div`
   svg {
     padding: 4px;
   }
+  cursor: pointer;
 `;
 
 const MusicWrapper = styled.div`
@@ -150,21 +154,43 @@ const DetailContainer = styled.div`
 
 export default function MusicView(props) {
   // API 연동 전 임시
+  const { index } = props
   const type = "Music"
-  const id = props.index
-  const summary = "테스트 이미지"
-  const main_tag = "메인 태그"
-  const sub_tags = ["태그 1", "태그 2"]
-  const src = "https://github.com/rafaelreis-hotmart/Audio-Sample-files/raw/master/sample.mp3"
-  const visited = 10
-  const published_date = '2021-05-25'
-  const sub_tags_element = sub_tags.map(x => (
-    <HashTag key={x}># {x}</HashTag>
-  ))
+  const [music, setMusic] = useState({})
 
   // data patch 시 사용
-  useEffect(() => {
+  const getMusic = async () => {
+    try {
+      const music_response = await axios.get(`${server_ip}/music/view/${index}`)
+      setMusic(music_response.data[0])
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
+  let sub_tags_element = []
+  if (music.sub_tags !== undefined) {
+    sub_tags_element = music.sub_tags.map(x => (
+      <a href={`/music?query=${x}`}><HashTag># {x}</HashTag></a>
+    ))
+  }
+
+  const downloadFile = () => {
+    var link = document.createElement('a');
+
+    link.setAttribute('download', null);
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+
+    link.setAttribute('href', music.music);
+    link.click();
+
+    document.body.removeChild(link);
+  }
+
+  useEffect(async () => {
+    await getMusic()
   }, [])
 
 
@@ -176,7 +202,7 @@ export default function MusicView(props) {
           <TitleContainer>Music View</TitleContainer>
           <Line />
           <MusicWrapper>
-              <audio controls src={src}>
+              <audio controls src={music.music}>
                   Your browser does not support the
                   <code>audio</code> element.
               </audio>
@@ -185,21 +211,21 @@ export default function MusicView(props) {
             <HashTagContainer>
               <ContentWrapper>HashTag</ContentWrapper>
               <HashTagWrap>
-                <HashTag className="main_tag">{`# ${main_tag}`}</HashTag>
+                <HashTag className="main_tag">{`# ${music.main_tag}`}</HashTag>
                 {sub_tags_element}
               </HashTagWrap>
             </HashTagContainer>
             <ContentContainer>
               <ContentWrapper>Content</ContentWrapper>
-              <DetailContainer><FaCalendarDay /> {published_date}</DetailContainer>
-              <DetailContainer><FaEye /> {visited}</DetailContainer>
+              <DetailContainer><FaCalendarDay /> {music.published_date}</DetailContainer>
+              <DetailContainer><FaEye /> {music.visited}</DetailContainer>
               <ContentWrap>
-                {summary}
+                {music.summary}
               </ContentWrap>
             </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
-            <FaDownload />
+            <FaDownload onClick={downloadFile} />
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>
         </RelativeContainer>

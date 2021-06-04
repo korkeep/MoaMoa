@@ -7,7 +7,6 @@ import SEO from '../../components/SEO';
 import Image from '../../components/image';
 import VideoView from '../../components/videoView';
 import { server_ip } from '../../setting/env';
-import { QUERY_CHANGE } from '../../redux/query'
 
 const MainContainer = styled.div`
   width: 92%;
@@ -46,8 +45,44 @@ export default function VideoPage() {
   const url_query = params.get('query')
   const { sort, day } = useSelector((state) => state.query)  // query 빼오기
 
+  const initialVideo = async () => {
+    try {
+      // let params = {page: 1, sort: sort}, 추후제거
+      if (url_query !== null) {params.query = url_query}
+      if (sort === 'visited') {
+        if (day !== '')
+          params.day = day
+      }
+      let query_string = '?' + new URLSearchParams(params).toString()
+
+      const video_list_response = await axios.get(server_ip + '/video/list' + query_string)
+      const video_list = video_list_response.data.map(x => (
+        <ImageWrapper>
+            <Image
+              type="Video"
+              id={x.id}
+              key={x.id}
+              onClickFunction={setIndex}
+              summary={x.summary}
+              main_tag={x.main_tag}
+              sub_tags={x.sub_tags}
+              src={x.image}
+            />
+          </ImageWrapper>
+        )
+      )
+      setVideos(video_list);
+      setPage(2)
+      return
+    } catch (err) {
+      console.log(err)
+      return
+    }
+  };
+  
   const getVideo = async () => {
     try {
+      // let params = {page: page, sort: sort}, 추후제거
       if (url_query !== null) {params.query = url_query}
       if (sort === 'visited') {
         if (day !== '')
@@ -89,10 +124,15 @@ export default function VideoPage() {
       await getVideo();
     }
   };
+
+  // day, sort 변경
+  useEffect(async () => {
+    await initialVideo()
+  }, [day, sort]);
   
   // 첫 쿼리
   useEffect(async () => {
-    await getVideo();
+    await initialVideo();
   }, []);
 
 

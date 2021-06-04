@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import SEO from '../../components/SEO';
 import Music from '../../components/music';
 import MusicView from '../../components/musicView'
+import { server_ip } from '../../setting/env';
 
 const MainContainer = styled.div`
   width: 92%;
@@ -48,55 +49,104 @@ const ViewsWrapper = styled.div`
 `;
 
 export default function MusicPage() {
-  const [musics, setmusics] = useState([]); // Image 배열이 담겨 있음
+  const [musics, setMusics] = useState([]); // Image 배열이 담겨 있음
   const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
-  const [loading, setLoading] = useState(false); // 로딩 중인지 아닌지
   const [index, setIndex] = useState(-1);
-  const { query } = useSelector((state) => state.query)  // query 빼오기
-  const music = musics.find(element => element.id === index)
+  const params = new URLSearchParams(window.location.search)
+  const url_query = params.get('query')
+  const { sort, day } = useSelector((state) => state.query)
 
-  const getMusic = async () => {
-    setPage(page + 1);
-    setLoading(true);
-    let templist = [];
+  const initialMusic = async () => {
+    try {
+      // let params = {page: 1, sort: sort}, 추후제거
+      if (url_query !== null) {params.query = url_query}
+      if (sort === 'visited') {
+        if (day !== '')
+          params.day = day
+      }
+      let query_string = '?' + new URLSearchParams(params).toString()
 
-    // 여기는 API 만들어지면 업데이트 하겠습니다.
-    for (let i = 0; i < 20; i++) {
-      templist.push(
+      const music_list_response = await axios.get(server_ip + '/music/list' + query_string)
+      const music_list = music_list_response.data.map(x => (
         <MusicWrapper>
           <Music
             type="Music"
-            key={page * 20 + i}
+            key={x.music}
             onClickFunction={setIndex}
-            id={page * 20 + i}
-            artist={`IU`}
-            title={`좋은 날`}
-            date={`2020-01-01`}
-            main_tag={"아이유"}
-            summary={`IU - 좋은 날`}
-            sub_tags={["서브 태그 1", "서브 태그 2"]}
-            views={10}
+            id={x.id}
+            artist={x.main_tag}
+            title={x.title}
+            date={x.published_date}
+            main_tag={x.main_tag}
+            summary={x.summary}
+            sub_tags={x.sub_tags}
+            views={x.visited}
           />
         </MusicWrapper>
-      );
+      ))
+      setMusics(music_list)
+      setPage(2)
+      return
+    } catch (err) {
+      console.log(err)
+      return
     }
-    setmusics([...musics, ...templist]);
-    setLoading(false);
   };
 
-  const handleScroll = () => {
+  const getMusic = async () => {
+    try {
+      // let params = {page: page, sort: sort}, 추후제거
+      if (url_query !== null) {params.query = url_query}
+      if (sort === 'visited') {
+        if (day !== '')
+          params.day = day
+      }
+      let query_string = '?' + new URLSearchParams(params).toString()
+
+      const music_list_response = await axios.get(server_ip + '/music/list' + query_string)
+      const music_list = music_list_response.data.map(x => (
+        <MusicWrapper>
+          <Music
+            type="Music"
+            key={x.music}
+            onClickFunction={setIndex}
+            id={x.id}
+            artist={x.main_tag}
+            title={x.title}
+            date={x.published_date}
+            main_tag={x.main_tag}
+            summary={x.summary}
+            sub_tags={x.sub_tags}
+            views={x.visited}
+          />
+        </MusicWrapper>
+      ))
+      setMusics([...musics, ...music_list])
+      setPage(2)
+      return
+    } catch (err) {
+      console.log(err)
+      return
+    }
+  };
+
+  const handleScroll = async () => {
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = document.documentElement.scrollTop;
     const clientHeight = document.documentElement.clientHeight;
-    if (scrollTop + clientHeight >= scrollHeight && loading === false) {
+    if (scrollTop + clientHeight >= scrollHeight) {
       // 페이지 끝에 도달하면 추가 데이터를 받아온다
-      getMusic();
+      await getMusic();
     }
   };
 
-  useEffect(() => {
-    getMusic();
+  useEffect(async () => {
+    await initialMusic();
   }, []);
+
+  useEffect(async () => {
+    await initialMusic()
+  }, [day, sort]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -112,8 +162,7 @@ export default function MusicPage() {
       {index !== -1 && (
         <MusicView
           setIndex={setIndex}
-          index={index}
-          music={music} />
+          index={index} />
       )}
       <MainContainer>
         <ColumnWrapper>

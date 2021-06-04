@@ -52,7 +52,7 @@ export default function ImagePage() {
   const initialImage = async () => {
     test_print()
     try {
-      // let params = {page: page, sort: sort}, 추후제거
+      // let params = {page: 1, sort: sort}, 추후제거
       if (url_query !== null) {params.query = url_query}
       if (sort === 'visited') {
         if (day !== '')
@@ -77,7 +77,6 @@ export default function ImagePage() {
         )
       )
       setImages(image_list);
-      setLoading(false);
       setPage(2)
       return
     } catch (err) {
@@ -87,7 +86,6 @@ export default function ImagePage() {
   };
 
   const getImage = async () => {
-    test_print()
     try {
       // let params = {page: page, sort: sort}, 추후제거
       if (url_query !== null) {params.query = url_query}
@@ -114,7 +112,6 @@ export default function ImagePage() {
         )
       )
       setImages([...images, ...image_list]);
-      setLoading(false);
       setPage(page + 1)
 
       return
@@ -129,7 +126,7 @@ export default function ImagePage() {
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = document.documentElement.scrollTop;
     const clientHeight = document.documentElement.clientHeight;
-    if (scrollTop + clientHeight >= scrollHeight && loading === false) {
+    if (scrollTop + clientHeight >= scrollHeight) {
       // 페이지 끝에 도달하면 추가 데이터를 받아온다
       await getImage();
     }
@@ -160,8 +157,7 @@ export default function ImagePage() {
       {index !== -1 && (
         <ImageView
           setIndex={setIndex}
-          index={index}
-          image={images} />
+          index={index} />
       )}
     </>
   );

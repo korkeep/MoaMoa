@@ -55,6 +55,7 @@ const RelativeContainer = styled.div`
 const ButtonWrapper = styled.div`
   display: inline-block;
   position: fixed;
+  cursor: pointer;
   top: 0;
   right: 1%;
   padding: 8px;
@@ -62,6 +63,7 @@ const ButtonWrapper = styled.div`
   svg {
     padding: 4px;
   }
+  cursor: pointer;
 `;
 
 const ImageWrapper = styled.div`
@@ -164,8 +166,22 @@ export default function ImageView(props) {
   let sub_tags_element = []
   if (image.sub_tags !== undefined) {
     sub_tags_element = image.sub_tags.map(x => (
-      <Link to={`/image?query=${x}`}><HashTag># {x}</HashTag></Link>
+      <a href={`/image?query=${x}`}><HashTag># {x}</HashTag></a>
     ))
+  }
+
+  const downloadFile = () => {
+    var link = document.createElement('a');
+
+    link.setAttribute('download', null);
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+
+    link.setAttribute('href', image.image);
+    link.click();
+
+    document.body.removeChild(link);
   }
 
   // data patch 시 사용
@@ -210,7 +226,7 @@ export default function ImageView(props) {
             </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
-            <FaDownload />
+            <FaDownload onClick={downloadFile}/>
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>
         </RelativeContainer>

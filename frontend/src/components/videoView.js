@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay } from 'react-icons/fa';
+
 import Video from '../components/video';
+import { server_ip } from '../setting/env';
+import axios from 'axios';
 
 const MainContainer = styled.div`
   height: 100%;
@@ -144,22 +147,43 @@ const DetailContainer = styled.div`
 
 export default function VideoView(props) {
   // API 연동 전 임시
-  const type = "Video"
-  const id = props.index
-  const summary = "테스트 이미지"
-  const main_tag = "메인 태그"
-  const sub_tags = ["태그 1", "태그 2"]
-  const video_src = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
-  const visited = 10
-  const published_date = '2021-05-25'
+  const { index } = props
+  const type = 'Viedo'
+  const [video, setVideo] = useState({})
 
-  const sub_tags_element = sub_tags.map(x => (
-    <HashTag key={x}># {x}</HashTag>
-  ))
+  const getVideo = async () => {
+    try {
+      const video_response = await axios.get(`${server_ip}/video/view/${index}`)
+      setVideo(video_response.data[0])
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  let sub_tags_element = []
+  if (video.sub_tags !== undefined) {
+    sub_tags_element = video.sub_tags.map(x => (
+      <a to={`/video?query=${x}`}><HashTag># {x}</HashTag></a>
+    ))
+  }
+
+  const downloadFile = () => {
+    var link = document.createElement('a');
+
+    link.setAttribute('download', null);
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+
+    link.setAttribute('href', video.video);
+    link.click();
+
+    document.body.removeChild(link);
+  }
 
   // data patch 시 사용
-  useEffect(() => {
-
+  useEffect(async () => {
+    await getVideo()
   }, [])
 
 
@@ -173,32 +197,32 @@ export default function VideoView(props) {
           <ImageWrapper>
             <Video
               type={type}
-              id={id}
-              summary={summary}
-              main_tag={main_tag}
-              sub_tags={sub_tags}
-              video_src={video_src}
+              id={index}
+              summary={video.summary}
+              main_tag={video.main_tag}
+              sub_tags={video.sub_tags}
+              video_src={video.video}
             />
           </ImageWrapper>
           <InfoContainer>
             <HashTagContainer>
               <ContentWrapper>HashTag</ContentWrapper>
               <HashTagWrap>
-                <HashTag className="main_tag">{`# ${main_tag}`}</HashTag>
+              <a href={`/video?query=${video.main_tag}`}><HashTag className="main_tag">{`# ${video.main_tag}`}</HashTag></a>
                 {sub_tags_element}
               </HashTagWrap>
             </HashTagContainer>
             <ContentContainer>
               <ContentWrapper>Content</ContentWrapper>
-              <DetailContainer><FaCalendarDay /> {published_date}</DetailContainer>
-              <DetailContainer><FaEye /> {visited}</DetailContainer>
+              <DetailContainer><FaCalendarDay /> {video.published_date}</DetailContainer>
+              <DetailContainer><FaEye /> {video.visited}</DetailContainer>
               <ContentWrap>
-                {summary}
+                {video.summary}
               </ContentWrap>
             </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
-            <FaDownload />
+            <FaDownload onClick={downloadFile} />
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>
         </RelativeContainer>

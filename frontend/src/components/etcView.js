@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay, FaFile } from 'react-icons/fa';
-import Video from '../components/video';
+import axios from 'axios';
+
+import { server_ip } from '../setting/env';
 
 const MainContainer = styled.div`
   height: 100%;
@@ -58,6 +60,7 @@ const ButtonWrapper = styled.div`
   svg {
     padding: 4px;
   }
+  cursor: pointer;
 `;
 
 const FileWrapper = styled.div`
@@ -151,21 +154,42 @@ const DetailContainer = styled.div`
 
 export default function EtcView(props) {
   // API 연동 전 임시
-  const type = "Music"
-  const id = props.index
-  const summary = "테스트 이미지"
-  const main_tag = "메인 태그"
-  const sub_tags = ["태그 1", "태그 2"]
-  const src = "https://github.com/rafaelreis-hotmart/Audio-Sample-files/raw/master/sample.mp3"
-  const visited = 10
-  const published_date = '2021-05-25'
-  const sub_tags_element = sub_tags.map(x => (
-    <HashTag key={x}># {x}</HashTag>
-  ))
+  const { index } = props
+  const type = "Etc"
+  const [etc, setEtc] = useState({})
+
+  const getEtc = async () => {
+    try {
+      const etc_response = await axios.get(`${server_ip}/etc/view/${index}`)
+      setEtc(etc_response.data[0])
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  let sub_tags_element = []
+  if (etc.sub_tags !== undefined) {
+    sub_tags_element = etc.sub_tags.map(x => (
+      <a href={`/etc?query=${x}`}><HashTag># {x}</HashTag></a>
+    ))
+  }
+
+  const downloadFile = () => {
+    var link = document.createElement('a');
+
+    link.setAttribute('download', null);
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+
+    link.setAttribute('href', etc.etc);
+    link.click();
+
+    document.body.removeChild(link);
+  }
 
   // data patch 시 사용
-  useEffect(() => {
-
+  useEffect(async () => {
+    await getEtc()
   }, [])
 
 
@@ -174,7 +198,7 @@ export default function EtcView(props) {
     <MainContainer>
       <PostContainer>
         <RelativeContainer>
-          <TitleContainer>Etc View</TitleContainer>
+          <TitleContainer>File View</TitleContainer>
           <Line />
           <FileWrapper>
             <FaFile />
@@ -183,21 +207,21 @@ export default function EtcView(props) {
             <HashTagContainer>
               <ContentWrapper>HashTag</ContentWrapper>
               <HashTagWrap>
-                <HashTag className="main_tag">{`# ${main_tag}`}</HashTag>
+                <HashTag className="main_tag">{`# ${etc.main_tag}`}</HashTag>
                 {sub_tags_element}
               </HashTagWrap>
             </HashTagContainer>
             <ContentContainer>
               <ContentWrapper>Content</ContentWrapper>
-              <DetailContainer><FaCalendarDay /> {published_date}</DetailContainer>
-              <DetailContainer><FaEye /> {visited}</DetailContainer>
+              <DetailContainer><FaCalendarDay /> {etc.published_date}</DetailContainer>
+              <DetailContainer><FaEye /> {etc.visited}</DetailContainer>
               <ContentWrap>
-                {summary}
+                {etc.summary}
               </ContentWrap>
             </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
-            <FaDownload />
+            <FaDownload onClick={downloadFile}/>
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>
         </RelativeContainer>

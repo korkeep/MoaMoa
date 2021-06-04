@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import SEO from '../../components/SEO';
 import Etc from '../../components/etc';
 import EtcView from '../../components/etcView';
+import { server_ip } from '../../setting/env';
 
 const MainContainer = styled.div`
   width: 92%;
@@ -47,56 +48,105 @@ const ViewsWrapper = styled.div`
   width: 15%;
 `;
 
-export default function MusicPage() {
+export default function EtcPage() {
   const [etcs, setEtcs] = useState([]); // Image 배열이 담겨 있음
   const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
-  const [loading, setLoading] = useState(false); // 로딩 중인지 아닌지
   const [index, setIndex] = useState(-1);
-  const { query } = useSelector((state) => state.query)  // query 빼오기
-  const etc = etcs.find(element => element.id === index)
+  const params = new URLSearchParams(window.location.search)
+  const url_query = params.get('query')
+  const { sort, day } = useSelector((state) => state.query)
 
-  const getEtc = async () => {
-    setPage(page + 1);
-    setLoading(true);
-    let templist = [];
+  const initialEtc = async () => {
+    try {
+      // let params = {page: 1, sort: sort}, 추후제거
+      if (url_query !== null) {params.query = url_query}
+      if (sort === 'visited') {
+        if (day !== '')
+          params.day = day
+      }
+      let query_string = '?' + new URLSearchParams(params).toString()
 
-    // 여기는 API 만들어지면 업데이트 하겠습니다.
-    for (let i = 0; i < 20; i++) {
-      templist.push(
+      const etc_list_response = await axios.get(server_ip + '/etc/list' + query_string)
+      const etc_list = etc_list_response.data.map(x => (
         <MusicWrapper>
           <Etc
             type="Etc"
-            key={page * 20 + i}
+            key={x.id}
             onClickFunction={setIndex}
-            id={page * 20 + i}
-            artist={`IU`}
-            title={`콘서트일정.docx`}
-            date={`2020-01-01`}
-            main_tag={"아이유"}
-            summary={`IU - 콘서트일정.docx`}
-            sub_tags={["서브 태그 1", "서브 태그 2"]}
-            views={10}
+            id={x.id}
+            artist={x.main_tag}
+            title={x.title}
+            date={x.published_date}
+            main_tag={x.main_tag}
+            summary={x.summary}
+            sub_tags={x.sub_tags}
+            views={x.visited}
           />
         </MusicWrapper>
-      );
+      ))
+      setEtcs(etc_list)
+      setPage(2)
+      return
+    } catch (err) {
+      console.log(err)
+      return
     }
-    setEtcs([...etcs, ...templist]);
-    setLoading(false);
   };
 
-  const handleScroll = () => {
+  const getEtc = async () => {
+    try {
+      // let params = {page: 1, sort: sort}, 추후제거
+      if (url_query !== null) {params.query = url_query}
+      if (sort === 'visited') {
+        if (day !== '')
+          params.day = day
+      }
+      let query_string = '?' + new URLSearchParams(params).toString()
+
+      const etc_list_response = await axios.get(server_ip + '/etc/list' + query_string)
+      const etc_list = etc_list_response.data.map(x => (
+        <MusicWrapper>
+          <Etc
+            type="Etc"
+            key={x.id}
+            onClickFunction={setIndex}
+            id={x.id}
+            artist={x.main_tag}
+            title={x.title}
+            date={x.published_date}
+            main_tag={x.main_tag}
+            summary={x.summary}
+            sub_tags={x.sub_tags}
+            views={x.visited}
+          />
+        </MusicWrapper>
+      ))
+      setEtcs([...etcs, ...etc_list])
+      setPage(2)
+      return
+    } catch (err) {
+      console.log(err)
+      return
+    }
+  };
+
+  const handleScroll = async () => {
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = document.documentElement.scrollTop;
     const clientHeight = document.documentElement.clientHeight;
-    if (scrollTop + clientHeight >= scrollHeight && loading === false) {
+    if (scrollTop + clientHeight >= scrollHeight) {
       // 페이지 끝에 도달하면 추가 데이터를 받아온다
-      getEtc();
+      await getEtc();
     }
   };
 
-  useEffect(() => {
-    getEtc();
+  useEffect(async () => {
+    await initialEtc();
   }, []);
+
+  useEffect(async () => {
+    await initialEtc()
+  }, [day, sort]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -112,8 +162,7 @@ export default function MusicPage() {
       {index !== -1 && (
         <EtcView
           setIndex={setIndex}
-          index={index}
-          etc={etc} />
+          index={index} />
       )}
       <MainContainer>
         <ColumnWrapper>
