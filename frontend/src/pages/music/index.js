@@ -67,7 +67,7 @@ export default function MusicPage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const music_list_response = await axios.get(server_ip + '/music/list' + query_string)
-      const music_list = music_list_response.data.map(x => (
+      const music_list = music_list_response.data.music.map(x => (
         <MusicWrapper>
           <Music
             type="Music"
@@ -104,7 +104,7 @@ export default function MusicPage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const music_list_response = await axios.get(server_ip + '/music/list' + query_string)
-      const music_list = music_list_response.data.map(x => (
+      const music_list = music_list_response.data.music.map(x => (
         <MusicWrapper>
           <Music
             type="Music"

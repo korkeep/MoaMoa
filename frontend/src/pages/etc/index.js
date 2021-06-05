@@ -52,6 +52,7 @@ export default function EtcPage() {
   const [etcs, setEtcs] = useState([]); // Image 배열이 담겨 있음
   const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
   const [index, setIndex] = useState(-1);
+  const [max_page, setMaxPage] = useState(1000);
   const params = new URLSearchParams(window.location.search)
   const url_query = params.get('query')
   const { sort, day } = useSelector((state) => state.query)
@@ -67,7 +68,8 @@ export default function EtcPage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const etc_list_response = await axios.get(server_ip + '/etc/list' + query_string)
-      const etc_list = etc_list_response.data.map(x => (
+      setMaxPage(etc_list_response.data.page_info.max_page)
+      const etc_list = etc_list_response.data.etc.map(x => (
         <MusicWrapper>
           <Etc
             type="Etc"
@@ -94,8 +96,15 @@ export default function EtcPage() {
   };
 
   const getEtc = async () => {
+    if (max_page < page) {
+      return
+    }
+
     try {
-      // let params = {page: 1, sort: sort}, 추후제거
+      if (max_page === page) {
+        alert('페이지의 끝에 도달했습니다.')
+      } 
+      // let params = {page: page, sort: sort}, 추후제거
       if (url_query !== null) {params.query = url_query}
       if (sort === 'visited') {
         if (day !== '')

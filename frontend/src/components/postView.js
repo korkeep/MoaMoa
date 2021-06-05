@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { FaRegTimesCircle, FaPlus } from 'react-icons/fa'
 import Dropzone, { useDropzone } from 'react-dropzone'
+import axios from 'axios'
+
+import { server_ip } from '../setting/env'
 
 const MainContainer = styled.div`
     height: 100%;
@@ -169,39 +172,41 @@ const SubmitButton = styled.button`
 
 export default function PostView(props) {
     const [acceptedFile, setAcceptedFile] = useState(null)
+    const [title, setTitle] = useState('')
+    const [title_needed, setTitleNeeded] = useState(false)
     const [summary, setSummary] = useState('')
     const [hash_tag, setHashTag] = useState('')
     const [hash_tags, setHashTags] = useState([])
     const [type, setType] = useState('')
-    let preview, message
+    const [message, setMessage] = useState('밑에 dropzone을 이용하여, 파일을 업로드 해 주세요!')
+    const [preview, setPreview] = useState(<></>)
 
-    if (acceptedFile !== null) {
-        console.log(acceptedFile[0])
-        message = acceptedFile[0].path
-        if (acceptedFile[0].type.startsWith('image')) {
-            preview = <CustomImage src={URL.createObjectURL(acceptedFile[0])} />
+    const file_type_check = (file) => {
+        setMessage(file[0].path)
+        if (file[0].type.startsWith('image')) {
+            setPreview(<CustomImage src={URL.createObjectURL(file[0])} />)
             setType('Image')
-        } else if (acceptedFile[0].type.startsWith('video')) {
-            preview = (
-                <CustomVideo controls>
-                    <source src={URL.createObjectURL(acceptedFile[0])} type={acceptedFile[0].type}/>
+            setTitleNeeded(false)
+        } else if (file[0].type.startsWith('video')) {
+            setPreview(<CustomVideo controls>
+                    <source src={URL.createObjectURL(file[0])} type={file[0].type}/>
                     지원하지 않는 브라우저 입니다.
                 </CustomVideo>
             )
             setType('Video')
-        } else if (acceptedFile[0].type.startsWith('audio')) {
-            preview = <audio controls src={URL.createObjectURL(acceptedFile[0])}>
+            setTitleNeeded(false)
+        } else if (file[0].type.startsWith('audio')) {
+            setPreview(<audio controls src={URL.createObjectURL(file[0])}>
                             Your browser does not support the
                             <code>audio</code> element.
-                        </audio>
+                        </audio>)
             setType('Audio')
+            setTitleNeeded(true)
         } else {
-            preview = <CustomImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFpqOXYHlS5UFVgfKan5ihUBktkCDPCNTBnQ&usqp=CAU" />
+            setPreview(<CustomImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFpqOXYHlS5UFVgfKan5ihUBktkCDPCNTBnQ&usqp=CAU" />)
             setType('Etc')
+            setTitleNeeded(true)
         }
-    } else {
-        preview = <></>
-        message = "밑에 dropzone을 이용하여, 파일을 업로드 해 주세요!"
     }
 
     const hash_tag_elements = hash_tags.map((x, index) => (
@@ -210,9 +215,26 @@ export default function PostView(props) {
         }}/></HashTag>
     ))
 
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
     const postFile = async () => {
+        let post_response
         if (type === '') {
             alert('파일을 올려주세요!')
+            return
+        } else if ((type === 'Audio' || type === 'Etc') && title === '') {
+            alert('Title을 입력 해 주세요!')
+            return
+        } else if (summary === '') {
+            alert('Summary를 입력 해 주세요!')
+            return
+        } else if (hash_tags.length === 0) {
+            alert('Hash Tag를 입력 해 주세요!')
             return
         }
 
@@ -220,29 +242,46 @@ export default function PostView(props) {
             let data = {
                 summary: summary,
                 main_tag: hash_tags[0],
-                sub_tags: hash_tag.slice(1)
+                sub_tags: hash_tags.slice(1)
             }
+            
             switch (type) {
                 case 'Image':
-                    data.image = btoa(unescape(encodeURIComponent(acceptedFile[0])))
+                    data.image = await toBase64(acceptedFile[0]).split(',')[1]
+                    console.log(data)
+                    post_response = await axios.post(`${server_ip}/image/post/`, data=data)
+                    alert('성공적으로 업로드 되었습니다!')
                     break;
                 case 'Video':
-                    data.video = btoa(unescape(encodeURIComponent(acceptedFile[0])))
+                    data.video = await toBase64(acceptedFile[0])
+                    console.log(data)
+                    post_response = await axios.post(`${server_ip}/video/post/`, data=data)
+                    alert('성공적으로 업로드 되었습니다!')
                     break;
                 case 'Audio':
-                    data.music = btoa(unescape(encodeURIComponent(acceptedFile[0])))
+                    data.music = await toBase64(acceptedFile[0])
+                    data.title = title
+                    console.log(data)
+                    post_response = await axios.post(`${server_ip}/music/post/`, data=data)
+                    alert('성공적으로 업로드 되었습니다!')
                     break;
                 case 'Etc':
-                    data.file = btoa(unescape(encodeURIComponent(acceptedFile[0])))
+                    data.file = await toBase64(acceptedFile[0])
+                    data.file = data.file.split(',')[1]
+                    data.title = title
+                    console.log(data)
+                    post_response = await axios.post(`${server_ip}/etc/post/`, data=data)
+                    alert('성공적으로 업로드 되었습니다!')
                     break;
                 default:
                     break;
             }
-
+            
             // 창 OFF
             props.setView(false)
         } catch (err) {
-
+            console.log(err.response.data)
+            props.setView(false)
         }
     }
 
@@ -257,6 +296,15 @@ export default function PostView(props) {
                         {preview}
                     </PreviewContainer>
                     <DetailContainer>
+                        {title_needed && (
+                            <ContentContainer>
+                                <ContentNameWrapper>Title</ContentNameWrapper>
+                                <ContentInput
+                                    value={title}
+                                    onChange={e => setTitle(e.target.value)}
+                                />
+                            </ContentContainer>
+                        )}
                         <ContentContainer>
                             <ContentNameWrapper>Summary</ContentNameWrapper>
                             <ContentTextarea
@@ -293,11 +341,12 @@ export default function PostView(props) {
                             {message}
                         </ContentContainer>
                         <ContentContainer>
-                            <SubmitButton>업로드</SubmitButton>
+                            <SubmitButton onClick={postFile}>업로드</SubmitButton>
                         </ContentContainer>
                     </DetailContainer>
                     <Dropzone
-                        onDrop={(file) => (setAcceptedFile(file))}
+                        onDrop={file => {file_type_check(file); setAcceptedFile(file);}}
+                        multiple={false}
                         >
                         {({getRootProps, getInputProps}) => (
                             <FileContainer {...getRootProps()}>
