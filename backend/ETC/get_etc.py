@@ -1,56 +1,58 @@
 import json
-
+import math
 # GET ALL ETCs
 # /etc/list
 def get_all_etcs(cursor,tag=None):
     if tag:
-        sql = "SELECT * FROM etc WHERE 0<>LOCATE('%s',hashtag);" %(tag)
+        sql = "SELECT * FROM etc WHERE main_tag like '%" + str(tag) + "%' or sub_tags like '%" + str(tag) + "%';"
     else:
         sql = "SELECT * FROM etc;"
         
     cursor.execute(sql)
-
     buff = cursor.fetchall()
+
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link] = data
+        [id,title,summary,file,main_tag,sub_tags,visited,published_date] = data
+        sub_tags = sub_tags.split(',')
         node = {
-            'id':index,
-            'etc':o_link,
-            'summary':explain,
-            'main_tag':singer,
-            'sub_tag':hashtag,
-            'visited':view,
-            'published_date':str(date)}
+            'id':id,
+            'title' : title, 
+            'summary': summary,
+            'file' : file,
+            'main_tag': main_tag,
+            'sub_tags': sub_tags,
+            'visited': visited,
+            'published_date': str(published_date)}
         res.append(node)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(res)
+    body = {
+        'page_info' : {'max_page' : math.ceil(len(res)/50.0)},
+        'etcs' : res
     }
+    return json.dumps(body)
 
 # GET one ETC
 # /etc/view/{id}
 def get_one_etc(cursor, id):
-    sql = "SELECT * FROM etc WHERE `index`=%s" %(id)
+    sql = "SELECT * FROM etc WHERE `id`=%s" %(id)
         
     cursor.execute(sql)
     buff = cursor.fetchall()
     
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link] = data
+        [id,title,summary,file,main_tag,sub_tags,visited,published_date] = data
+        sub_tags = sub_tags.split(',')
         node = {
-            'id':index,
-            'etc':o_link,
-            'summary':explain,
-            'main_tag':singer,
-            'sub_tag':hashtag,
-            'visited':view,
-            'published_date':str(date)}
+            'id':id,
+            'title' : title, 
+            'summary': summary,
+            'file' : file,
+            'main_tag': main_tag,
+            'sub_tags': sub_tags,
+            'visited': visited,
+            'published_date': str(published_date)}
         res.append(node)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(res)
-    }
+    return json.dumps(res)

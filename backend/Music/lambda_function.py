@@ -26,28 +26,30 @@ logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 def lambda_handler(event, context):
     cursor = conn.cursor()
-    res = {
-        'statusCode': 400,
-        'body': 'error'
-    }
+    res = {'headers':{
+        'Content-Type' : 'application/json',
+        'Access-Control-Allow-Headers' : 'Content-Type',
+        'Access-Control-Allow-Origin' : "*",
+        'Access-Control-Allow-Methods': "OPTIONS,POST,GET"
+    }}
     # post music
     if event['httpMethod'] == 'POST':
         body = json.loads(event['body'])
-        res = post_music.post_music(cursor, conn, body['music'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
+        res['statusCode'] = 200
+        res['body'] = post_music.post_music(cursor, conn, body['music'],body['title'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one music
     elif event['httpMethod'] == 'GET' and event['resource'] == '/music/view/{id+}':
-        res = get_music.get_one_music(cursor,event['pathParameters']['id'])
+        res['statusCode'] = 200
+        res['body'] = get_music.get_one_music(cursor,event['pathParameters']['id'])
     # get all musics
     elif event['httpMethod'] == 'GET' and event['resource'] == '/music/list':
+        res['statusCode'] = 200
         if event['queryStringParameters']:
-            res = get_music.get_all_musics(cursor,event['queryStringParameters']['query'])
+            res['body'] = get_music.get_all_musics(cursor,event['queryStringParameters']['query'])
         else:
-            res = get_music.get_all_musics(cursor)
+            res['body'] = get_music.get_all_musics(cursor)
+    else:
+        res['statusCode'] = 400
+        res['body'] = json.dumps(event)
 
-    res['headers'] = {
-        'Content-Type' : 'applicaion/json',
-        'Access-Control-Allow-Headers' : 'Content-Type',
-        'Access-Control-Allow-Origin' : "*",
-        'Access-Control-Allow-Methods': "POST,GET"
-    }  
     return res

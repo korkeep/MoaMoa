@@ -26,28 +26,30 @@ logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 def lambda_handler(event, context):
     cursor = conn.cursor()
-    res = {
-        'statusCode': 400,
-        'body': 'error'
-    }
+    res = {'headers':{
+        'Content-Type' : 'application/json',
+        'Access-Control-Allow-Headers' : 'Content-Type',
+        'Access-Control-Allow-Origin' : "*",
+        'Access-Control-Allow-Methods': "OPTIONS,POST,GET"
+    }}
     # post video
     if event['httpMethod'] == 'POST':
         body = json.loads(event['body'])
-        res = post_video.post_video(cursor, conn, body['video'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
+        res['statusCode'] = 200
+        res['body'] = post_video.post_video(cursor, conn, body['video'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one video
     elif event['httpMethod'] == 'GET' and event['resource'] == '/video/view/{id+}':
-        res = get_video.get_one_video(cursor,event['pathParameters']['id'])
+        res['statusCode'] = 200
+        res['body'] = get_video.get_one_video(cursor,event['pathParameters']['id'])
     # get all videos
     elif event['httpMethod'] == 'GET' and event['resource'] == '/video/list':
+        res['statusCode'] = 200
         if event['queryStringParameters']:
-            res = get_video.get_all_videos(cursor,event['queryStringParameters']['query'])
+            res['body'] = get_video.get_all_videos(cursor,event['queryStringParameters']['query'])
         else:
-            res = get_video.get_all_videos(cursor)
-        
-    res['headers'] = {
-        'Content-Type' : "application/json",
-        'Access-Control-Allow-Headers' : 'Content-Type',
-        'Access-Control-Allow-Origin' : "*",
-        'Access-Control-Allow-Methods': "POST,GET"
-    }
+            res['body'] = get_video.get_all_videos(cursor)
+    else:
+        res['statusCode'] = 400
+        res['body'] = json.dumps(event)
+    
     return res
