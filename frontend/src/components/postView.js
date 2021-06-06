@@ -44,17 +44,7 @@ const TitleContainer = styled.div`
     font-size: 32px;
     font-weight: bolder;
 `
-const DragDropContainer = styled.div`
-    position: fixed;
-    transform: translate(-50%, -50%);
-    top:50%;
-    left:50%;
-    width: 500px;
-    height: 400px;
-    border: 3px dashed #adb5bd;
-    &:hover { background-color:#e9ecef; };
-    cursor: pointer;
-`
+
 const ButtonWrapper = styled.div`
     display: inline-block;
     position: fixed;
@@ -88,13 +78,16 @@ const FileContainer = styled.div`
     left: 50%;
     width: 80%;
     transform: translate(-50%, -20px);
-
+    border: 3px dashed #adb5bd;
+    &:hover { background-color:#e9ecef; };
+    cursor: pointer;
     p {
         margin: 20px 0;
         height: 140px;
         line-height: 140px;
         text-align: center;
     }
+
 `
 
 const ContentContainer = styled.div`
@@ -168,6 +161,10 @@ const SubmitButton = styled.button`
     border-radius: 8px;
     padding: 6px 12px;
     font-size: 18px;
+    :hover{
+        background-color: #495057;
+    }
+    cursor: pointer;
 `
 
 export default function PostView(props) {

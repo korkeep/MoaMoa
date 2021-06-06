@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { STORE_ADD } from '../redux/store'
 
 const MainContainer = styled.div`
-  display: inline-block;
   background-color: white;
   justify-content: center;
   width: 100%;
@@ -25,6 +24,7 @@ const Image_ = styled.img`
   object-fit: cover;
   width: 100%;
   height: 100%;
+  vertical-align: middle;
 `;
 
 const DownloadButton = styled.div`
@@ -83,7 +83,7 @@ export default function Image(props) {
       onMouseLeave={() => setHover(false)}
     >
       {inHover && (
-        <DownloadButton onClick={e => storeFunction()}>저 장</DownloadButton>
+        <DownloadButton onClick={e => storeFunction()}>담 기</DownloadButton>
       )}
       <Figure onClick={e => props.onClickFunction(props.id)}>
         <Image_ src={props.src} />

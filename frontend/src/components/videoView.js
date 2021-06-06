@@ -66,12 +66,13 @@ const ButtonWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div`
-  width: 50%;
-  height: 100%;
   position: fixed;
-  top: 0%;
-  left: 0%;
-  display: flex;
+  transform: translate(-50%, -50%);
+  top:50%;
+  left:22%;
+  overflow:hidden;
+  max-width: 400px;
+  max-height: 600px;
   align-items: center;
   vertical-align: bottom;
 `;

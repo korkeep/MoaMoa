@@ -27,12 +27,9 @@ const Image_ = styled.img`
 `;
 
 const Video_ = styled.video`
-    left: 80px;
-    width: 400px;
-    max-height: 500px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    position: fixed;
-    top: 200px;
 `
 
 const DownloadButton = styled.div`

@@ -26,7 +26,6 @@ const MainContainer = styled.div`
 `;
 const ImageWrapper = styled.div`
   overflow: hidden;
-  display: flex;
   align-items: center;
   margin-bottom: 20px;
   min-width: 200px;
@@ -34,8 +33,6 @@ const ImageWrapper = styled.div`
   border-radius: 2em;
   -moz-border-radius: 2em;
   -webkit-border-radius: 2em;
-  border: 1px solid #c0c0c0;
-  vertical-align: bottom;
 `;
 
 export default function ImagePage() {
