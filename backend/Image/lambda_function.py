@@ -26,29 +26,32 @@ logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 def lambda_handler(event, context):
     cursor = conn.cursor()
-    res = {
-        'statusCode': 400,
-        'body': 'error'
-    }
+    res = {'headers':{
+        'Content-Type' : 'application/json',
+        'Access-Control-Allow-Headers' : 'Content-Type',
+        'Access-Control-Allow-Origin' : "*",
+        'Access-Control-Allow-Methods': "OPTIONS,POST,GET"
+    }}
     
     # post image
     if event['httpMethod'] == 'POST':
         body = json.loads(event['body'])
-        res = post_image.post_image(cursor, conn, body['image'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
+        res['statusCode'] = 200
+        res['body'] = post_image.post_image(cursor, conn, body['image'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
     # get one image
     elif event['httpMethod'] == 'GET' and event['resource'] == '/image/view/{id+}':
-        res = get_image.get_one_image(cursor,event['pathParameters']['id'])
+        res['statusCode'] = 200
+        res['body'] = get_image.get_one_image(cursor,event['pathParameters']['id'])
     # get all images
     elif event['httpMethod'] == 'GET' and event['resource'] == '/image/list':
         if event['queryStringParameters']:
-            res = get_image.get_all_images(cursor, event['queryStringParameters']['query'])
+            res['statusCode'] = 200
+            res['body'] = get_image.get_all_images(cursor, event['queryStringParameters']['query'])
         else:
-            res = get_image.get_all_images(cursor)
-
-    res['headers'] = {
-        'Content-Type' : "application/json",
-        'Access-Control-Allow-Headers' : 'Content-Type',
-        'Access-Control-Allow-Origin' : "*",
-        'Access-Control-Allow-Methods': "POST,GET"
-    }
+            res['statusCode'] = 200
+            res['body'] = get_image.get_all_images(cursor)
+    else:
+        res['statusCode'] = 400
+        res['body'] = json.dumps(event)
+    
     return res

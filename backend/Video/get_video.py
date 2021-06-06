@@ -1,56 +1,56 @@
 import json
-
+import math
 # GET ALL VIDEOS
 # /video/list
 def get_all_videos(cursor,tag=None):
     if tag:
-        sql = "SELECT * FROM video WHERE 0<>LOCATE('%s',hashtag);" %(tag)
+        sql = "SELECT * FROM video WHERE main_tag like '%" + str(tag) + "%' or sub_tags like '%" + str(tag) + "%';"
     else:
         sql = "SELECT * FROM video;"
         
     cursor.execute(sql)
     buff = cursor.fetchall()
-    
+
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,_,t_link] = data
+        [id,_,image,summary,main_tag,sub_tags,visited,published_date] = data
+        sub_tags = sub_tags.split(',')
         node = {
-            'id':index,
-            'video':t_link,
-            'summary':explain,
-            'main_tag':singer,
-            'sub_tag':hashtag,
-            'visited':view,
-            'published_date':str(date)}
+            'id':id,
+            'image':image,
+            'summary':summary,
+            'main_tag':main_tag,
+            'sub_tags':sub_tags,
+            'visited':visited,
+            'published_date':str(published_date)}
         res.append(node)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(res)
-    }
+    body = {
+        'page_info' : {'max_page' : math.ceil(len(res)/50.0)},
+        'videos' : res
+    }  
+    return json.dumps(body)
     
 # GET one VIDEO
 # /video/view/{id}
 def get_one_video(cursor, id):
-    sql = "SELECT * FROM video WHERE `index`=%s" %(id)
+    sql = "SELECT * FROM video WHERE `id`=%s" %(id)
         
     cursor.execute(sql)
     buff = cursor.fetchall()
     
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link,_] = data
+        [id,video, _, summary,main_tag,sub_tags,visited,published_date] = data
+        sub_tags = sub_tags.split(',')
         node = {
-            'id':index,
-            'video':o_link,
-            'summary':explain,
-            'main_tag':singer,
-            'sub_tag':hashtag,
-            'visited':view,
-            'published_date':str(date)}
+            'id':id,
+            'video':video,
+            'summary':summary,
+            'main_tag':main_tag,
+            'sub_tags':sub_tags,
+            'visited':visited,
+            'published_date':str(published_date)}
         res.append(node)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(res)
-    }
+    return json.dumps(res)

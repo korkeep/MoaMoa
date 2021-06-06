@@ -26,28 +26,30 @@ logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 def lambda_handler(event, context):
     cursor = conn.cursor()
-    res = {
-        'statusCode': 400,
-        'body': 'error'
-    }
-    # post etc
-    if event['httpMethod'] == 'POST':
-        body = json.loads(event['body'])
-        res = post_etc.post_etc(cursor, conn, body['etc'],body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
-    # get one etc
-    elif event['httpMethod'] == 'GET' and event['resource'] == '/etc/view/{id+}':
-        res = get_etc.get_one_etc(cursor,event['pathParameters']['id'])
-    # get all etcs
-    elif event['httpMethod'] == 'GET' and event['resource'] == '/etc/list':
-        if event['queryStringParameters']:
-            res = get_etc.get_all_etcs(cursor,event['queryStringParameters']['query'])
-        else:
-            res = get_etc.get_all_etcs(cursor)
-    
-    res['headers'] = {
+    res = {'headers':{
         'Content-Type' : 'application/json',
         'Access-Control-Allow-Headers' : 'Content-Type',
         'Access-Control-Allow-Origin' : "*",
-        'Access-Control-Allow-Methods': "POST,GET"
-    }
+        'Access-Control-Allow-Methods': "OPTIONS,POST,GET"
+    }}
+    # post etc
+    if event['httpMethod'] == 'POST':
+        body = json.loads(event['body'])
+        res['statusCode'] = 200
+        res['body'] = post_etc.post_etc(cursor, conn, body['file'], body['title'], body['summary'],body['main_tag'],body['sub_tags'],datetime.datetime.now().strftime('%Y-%m-%d'))
+    # get one etc
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/etc/view/{id+}':
+        res['statusCode'] = 200
+        res['body'] = get_etc.get_one_etc(cursor,event['pathParameters']['id'])
+    # get all etcs
+    elif event['httpMethod'] == 'GET' and event['resource'] == '/etc/list':
+        res['statusCode'] = 200
+        if event['queryStringParameters']:
+            res['body'] = get_etc.get_all_etcs(cursor,event['queryStringParameters']['query'])
+        else:
+            res['body'] = get_etc.get_all_etcs(cursor)
+    else:
+        res['statusCode'] = 400
+        res['body'] = json.dumps(event)
+    
     return res

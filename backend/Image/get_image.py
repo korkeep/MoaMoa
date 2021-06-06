@@ -1,10 +1,10 @@
 import json
-
+import math
 # GET ALL IMAGES
 # /image/list
 def get_all_images(cursor, tag=None):
     if tag:
-        sql = "SELECT * FROM photo WHERE 0<>LOCATE('%s',hashtag)" %(tag)
+        sql = "SELECT * FROM photo WHERE main_tag like '%" + str(tag) + "%' or sub_tags like '%" + str(tag) + "%';"
     else:
         sql = "SELECT * FROM photo;"
         
@@ -13,44 +13,44 @@ def get_all_images(cursor, tag=None):
     
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link,t_link] = data
+        [id, _, image_t, summary, main_tag, sub_tags, visited, published_date] = data
+        sub_tags = sub_tags.split(',')
         node = {
-            'id':index,
-            'image':t_link,
-            'summary':explain,
-            'main_tag':singer,
-            'sub_tag':hashtag,
-            'visited':view,
-            'published_date':str(date)}
+            'id':id,
+            'image':image_t,
+            'summary':summary,
+            'main_tag':main_tag,
+            'sub_tags':sub_tags,
+            'visited':visited,
+            'published_date':str(published_date)}
         res.append(node)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(res)
+    body = {
+        'page_info' : {'max_page' : math.ceil(len(res)/50.0)},
+        'images' : res
     }
+    return json.dumps(body)
     
 # GET one IMAGE
 # /image/view/{id}
 def get_one_image(cursor, id):
-    sql = "SELECT * FROM photo WHERE `index`=%s" %(id)
+    sql = "SELECT * FROM photo WHERE `id`=%s" %(id)
         
     cursor.execute(sql)
     buff = cursor.fetchall()
     
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link,t_link] = data
+        [id, image_o, _, summary, main_tag, sub_tags, visited, published_date] = data
+        sub_tags = sub_tags.split(',')
         node = {
-            'id':index,
-            'image':o_link,
-            'summary':explain,
-            'main_tag':singer,
-            'sub_tag':hashtag,
-            'visited':view,
-            'published_date':str(date)}
+            'id':id,
+            'image':image_o,
+            'summary':summary,
+            'main_tag':main_tag,
+            'sub_tags':sub_tags,
+            'visited':visited,
+            'published_date':str(published_date)}
         res.append(node)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(res)
-    }
+    return json.dumps(res)

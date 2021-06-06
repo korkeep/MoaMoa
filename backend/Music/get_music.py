@@ -1,56 +1,56 @@
 import json
-
+import math
 # GET ALL MUSICS
 # /music/list
 def get_all_musics(cursor,tag=None):
     if tag:
-        sql = "SELECT * FROM music WHERE 0<>LOCATE('%s',hashtag);"
+        sql = "SELECT * FROM music WHERE main_tag like '%" + str(tag) + "%' or sub_tags like '%" + str(tag) + "%';"
     else:
         sql = "SELECT * FROM music;"
-        
     cursor.execute(sql)
     buff = cursor.fetchall()
+
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link] = data
+        [id,title,_,music,main_tag,sub_tags,visited,published_date] = data
+        sub_tags = sub_tags.split(',')
         node = {
-            'id':index,
-            'music':o_link,
-            'summary':explain,
-            'main_tag':singer,
-            'sub_tag':hashtag,
-            'visited':view,
-            'published_date':str(date)}
+            'id':id,
+            'title':title,
+            'main_tag':main_tag,
+            'music':music,
+            'sub_tags':sub_tags,
+            'visited':visited,
+            'published_date':str(published_date)}
         res.append(node)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(res)
+    body = {
+        'page_info' : {'max_page' : math.ceil(len(res)/50.0)},
+        'musics' : res
     }
-
+    return json.dumps(body)
 
 # GET one MUSIC
 # /music/view/{id}
 def get_one_music(cursor, id):
-    sql = "SELECT * FROM music WHERE `index`=%s" %(id)
+    sql = "SELECT * FROM music WHERE `id`=%s" %(id)
         
     cursor.execute(sql)
     buff = cursor.fetchall()
     
     res = []
     for data in buff:
-        [index,explain,singer,hashtag,view,date,o_link] = data
+        [id,title,summary,music,main_tag,sub_tags,visited,published_date] = data
+        sub_tags = sub_tags.split(',')
         node = {
-            'id':index,
-            'music':o_link,
-            'summary':explain,
-            'main_tag':singer,
-            'sub_tag':hashtag,
-            'visited':view,
-            'published_date':str(date)}
+            'id':id,
+            'title':title,
+            'summary':summary,
+            'music':music,
+            'main_tag':main_tag,
+            'sub_tags':sub_tags,
+            'visited':visited,
+            'published_date':str(published_date)}
         res.append(node)
     
-    return {
-        'statusCode': 200,
-        'body': json.dumps(res)
-    }
+    return json.dumps(res)
