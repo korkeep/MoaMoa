@@ -170,7 +170,7 @@ export default function ImageView(props) {
   let sub_tags_element = []
   if (image.sub_tags !== undefined) {
     sub_tags_element = image.sub_tags.map(x => (
-      <a href={`/image?query=${x}`}><HashTag># {x}</HashTag></a>
+      <a href={`/image?query=${x}`} key={x}><HashTag># {x}</HashTag></a>
     ))
   }
 

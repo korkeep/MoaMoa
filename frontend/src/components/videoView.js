@@ -187,7 +187,7 @@ export default function VideoView(props) {
   let sub_tags_element = []
   if (video.sub_tags !== undefined) {
     sub_tags_element = video.sub_tags.map(x => (
-      <a to={`/video?query=${x}`}><HashTag># {x}</HashTag></a>
+      <a href={`/video?query=${x}`} key={x}><HashTag># {x}</HashTag></a>
     ))
   }
 

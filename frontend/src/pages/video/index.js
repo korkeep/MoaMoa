@@ -57,11 +57,10 @@ export default function VideoPage() {
 
       const video_list_response = await axios.get(server_ip + '/video/list' + query_string)
       const video_list = video_list_response.data.videos.map(x => (
-        <ImageWrapper>
+        <ImageWrapper key={x.id}>
             <Image
               type="Video"
               id={x.id}
-              key={x.id}
               onClickFunction={setIndex}
               summary={x.summary}
               main_tag={x.main_tag}
@@ -92,11 +91,10 @@ export default function VideoPage() {
 
       const video_list_response = await axios.get(server_ip + '/video/list' + query_string)
       const video_list = video_list_response.data.videos.map(x => (
-        <ImageWrapper>
+        <ImageWrapper key={x.id}>
             <Image
               type="Video"
               id={x.id}
-              key={x.id}
               onClickFunction={setIndex}
               summary={x.summary}
               main_tag={x.main_tag}

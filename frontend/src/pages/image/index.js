@@ -96,11 +96,10 @@ export default function ImagePage() {
 
       const image_list_response = await axios.get(server_ip + '/image/list' + query_string)
       const image_list = image_list_response.data.images.map(x => (
-          <ImageWrapper>
+          <ImageWrapper key={x.id}>
             <Image
               type="Image"
               id={x.id}
-              key={x.id}
               onClickFunction={setIndex}
               summary={x.summary}
               main_tag={x.main_tag}

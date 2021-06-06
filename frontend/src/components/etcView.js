@@ -195,7 +195,7 @@ export default function EtcView(props) {
   let sub_tags_element = []
   if (etc.sub_tags !== undefined) {
     sub_tags_element = etc.sub_tags.map(x => (
-      <a href={`/etc?query=${x}`}><HashTag key={x}># {x}</HashTag></a>
+      <a href={`/etc?query=${x}`} key={x}><HashTag># {x}</HashTag></a>
     ))
   }
 
