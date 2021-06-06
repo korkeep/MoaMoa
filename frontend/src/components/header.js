@@ -131,7 +131,7 @@ export default function Header() {
                 <HeaderTop />
                 <a href={base_url + '/image'}>
                     <LogoContainer>
-                        <img src="logo.png"></img>
+                        <img src="/logo.png"></img>
                     </LogoContainer>
                 </a>
                 <SearchContainer>

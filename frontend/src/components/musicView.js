@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay } from 'react-icons/fa';
+import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay, FaFolderPlus } from 'react-icons/fa';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { server_ip } from '../setting/env';
-import Video from '../components/video';
+import { STORE_ADD } from '../redux/store';
 
 const MainContainer = styled.div`
   height: 100%;
@@ -157,12 +158,35 @@ export default function MusicView(props) {
   const { index } = props
   const type = "Music"
   const [music, setMusic] = useState({})
+  const { contents } = useSelector(state => state.store)
+  const contents_list = Array.from(contents)
+  const dispatch = useDispatch()
+
+  const storeFunction = () => {
+    for (let content of contents_list) {
+      if (content.type == "Music" && content.id == music.id) {
+        alert("이미 찜 목록에 존재 합니다.")
+        return
+      }
+    }
+
+    const data = {
+      ...music,
+      type: type,
+      summary: music.title
+    }
+    dispatch({type: STORE_ADD, content: data})
+    alert("성공적으로 등록 하였습니다!")
+  }
 
   // data patch 시 사용
   const getMusic = async () => {
     try {
       const music_response = await axios.get(`${server_ip}/music/view/${index}`)
-      setMusic(music_response.data[0])
+      let temp_music = music_response.data[0]
+      if (temp_music.sub_tags[0] === "null")
+        delete temp_music.sub_tags
+      setMusic(temp_music)
     } catch (err) {
       console.log(err)
     }
@@ -171,7 +195,7 @@ export default function MusicView(props) {
   let sub_tags_element = []
   if (music.sub_tags !== undefined) {
     sub_tags_element = music.sub_tags.map(x => (
-      <a href={`/music?query=${x}`}><HashTag># {x}</HashTag></a>
+      <a key={x} href={`/music?query=${x}`}><HashTag># {x}</HashTag></a>
     ))
   }
 
@@ -202,7 +226,7 @@ export default function MusicView(props) {
           <TitleContainer>Music View</TitleContainer>
           <Line />
           <MusicWrapper>
-              <audio controls src={music.music}>
+              <audio key={music.music} controls src={music.music}>
                   Your browser does not support the
                   <code>audio</code> element.
               </audio>
@@ -225,6 +249,7 @@ export default function MusicView(props) {
             </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
+            <FaFolderPlus onClick={storeFunction}/>
             <FaDownload onClick={downloadFile} />
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>

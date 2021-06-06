@@ -48,6 +48,7 @@ export default function Etc(props) {
 
   const storeFunction = () => {
     for (let content of contents_list) {
+      console.log(content.type, props.type, content.id, props.id)
       if (content.type == props.type && content.id == props.id) {
         alert("이미 찜 목록에 존재 합니다.")
         return

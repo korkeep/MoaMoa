@@ -56,7 +56,7 @@ export default function VideoPage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const video_list_response = await axios.get(server_ip + '/video/list' + query_string)
-      const video_list = video_list_response.data.video.map(x => (
+      const video_list = video_list_response.data.videos.map(x => (
         <ImageWrapper>
             <Image
               type="Video"
@@ -91,7 +91,7 @@ export default function VideoPage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const video_list_response = await axios.get(server_ip + '/video/list' + query_string)
-      const video_list = video_list_response.data.video.map(x => (
+      const video_list = video_list_response.data.videos.map(x => (
         <ImageWrapper>
             <Image
               type="Video"

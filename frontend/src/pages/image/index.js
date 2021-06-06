@@ -61,12 +61,11 @@ export default function ImagePage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const image_list_response = await axios.get(server_ip + '/image/list' + query_string)
-      const image_list = image_list_response.data.image.map(x => (
-          <ImageWrapper>
+      const image_list = image_list_response.data.images.map(x => (
+          <ImageWrapper key={x.id}>
             <Image
               type="Image"
               id={x.id}
-              key={x.id}
               onClickFunction={setIndex}
               summary={x.summary}
               main_tag={x.main_tag}
@@ -96,7 +95,7 @@ export default function ImagePage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const image_list_response = await axios.get(server_ip + '/image/list' + query_string)
-      const image_list = image_list_response.data.image.map(x => (
+      const image_list = image_list_response.data.images.map(x => (
           <ImageWrapper>
             <Image
               type="Image"

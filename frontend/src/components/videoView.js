@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay } from 'react-icons/fa';
+import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay, FaFolderPlus } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { STORE_ADD } from '../redux/store';
 import Video from '../components/video';
 import { server_ip } from '../setting/env';
 import axios from 'axios';
@@ -150,11 +152,33 @@ export default function VideoView(props) {
   const { index } = props
   const type = 'Viedo'
   const [video, setVideo] = useState({})
+  const { contents } = useSelector(state => state.store)
+  const contents_list = Array.from(contents)
+  const dispatch = useDispatch()
+
+  const storeFunction = () => {
+    for (let content of contents_list) {
+      if (content.type == "Video" && content.id == video.id) {
+        alert("이미 찜 목록에 존재 합니다.")
+        return
+      }
+    }
+    const data = {
+      ...video,
+      type: type,
+    }
+    dispatch({type: STORE_ADD, content: data})
+    alert("찜 목록에 저장 되었습니다.")
+  }
 
   const getVideo = async () => {
     try {
       const video_response = await axios.get(`${server_ip}/video/view/${index}`)
-      setVideo(video_response.data[0])
+      let temp_video = video_response.data[0]
+      if (temp_video.sub_tags[0] === "null")
+        delete temp_video.sub_tags
+
+      setVideo(temp_video)
     } catch (err) {
       console.log(err)
     }
@@ -196,11 +220,6 @@ export default function VideoView(props) {
           <Line />
           <ImageWrapper>
             <Video
-              type={type}
-              id={index}
-              summary={video.summary}
-              main_tag={video.main_tag}
-              sub_tags={video.sub_tags}
               video_src={video.video}
             />
           </ImageWrapper>
@@ -222,6 +241,7 @@ export default function VideoView(props) {
             </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
+            <FaFolderPlus onClick={storeFunction} />
             <FaDownload onClick={downloadFile} />
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>

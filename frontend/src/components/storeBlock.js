@@ -144,7 +144,8 @@ export default function StoreBlock(props) {
     }
 
     if (sub_tags !== undefined) {
-        tags = sub_tags.map((x, index) => <a href={`/${type_url}/?query=${x}`}><span key={index}>{`# ${x}`}</span></a>)
+        if (sub_tags[0] !== "null")
+            tags = sub_tags.map((x, index) => <a key={x} href={`/${type_url}/?query=${x}`}><span key={index}>{`# ${x}`}</span></a>)
     } else {
         tags = []
     }

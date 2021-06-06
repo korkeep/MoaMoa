@@ -69,7 +69,7 @@ export default function EtcPage() {
 
       const etc_list_response = await axios.get(server_ip + '/etc/list' + query_string)
       setMaxPage(etc_list_response.data.page_info.max_page)
-      const etc_list = etc_list_response.data.etc.map(x => (
+      const etc_list = etc_list_response.data.etcs.map(x => (
         <MusicWrapper>
           <Etc
             type="Etc"
@@ -114,10 +114,9 @@ export default function EtcPage() {
 
       const etc_list_response = await axios.get(server_ip + '/etc/list' + query_string)
       const etc_list = etc_list_response.data.map(x => (
-        <MusicWrapper>
+        <MusicWrapper key={x.id}>
           <Etc
             type="Etc"
-            key={x.id}
             onClickFunction={setIndex}
             id={x.id}
             artist={x.main_tag}

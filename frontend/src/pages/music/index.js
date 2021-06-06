@@ -67,7 +67,7 @@ export default function MusicPage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const music_list_response = await axios.get(server_ip + '/music/list' + query_string)
-      const music_list = music_list_response.data.music.map(x => (
+      const music_list = music_list_response.data.musics.map(x => (
         <MusicWrapper>
           <Music
             type="Music"
@@ -104,11 +104,10 @@ export default function MusicPage() {
       let query_string = '?' + new URLSearchParams(params).toString()
 
       const music_list_response = await axios.get(server_ip + '/music/list' + query_string)
-      const music_list = music_list_response.data.music.map(x => (
-        <MusicWrapper>
+      const music_list = music_list_response.data.musics.map(x => (
+        <MusicWrapper key={x.music}>
           <Music
             type="Music"
-            key={x.music}
             onClickFunction={setIndex}
             id={x.id}
             artist={x.main_tag}

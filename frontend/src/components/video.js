@@ -59,37 +59,11 @@ const DownloadButton = styled.div`
 `;
 
 export default function Video(props) {
-  const { contents } = useSelector(state => state.store)
-  const contents_list = Array.from(contents)
-  const dispatch = useDispatch()
-
-  const storeFunction = () => {
-    for (let content of contents_list) {
-      if (content.type == props.type && content.id == props.id) {
-        alert("이미 찜 목록에 존재 합니다.")
-        return
-      }
-    }
-
-    alert("찜 목록에 저장 되었습니다.")
-    const content = {
-      type: props.type,
-      id: props.id,
-      summary: props.summary,
-      main_tag: props.main_tag,
-      sub_tags: props.sub_tags,
-      src: props.src,
-    }
-    dispatch({type: STORE_ADD, content: content})
-    console.log(content)
-  }
-
   return (
     <MainContainer>
-        <DownloadButton onClick={() => storeFunction()} />
-        <Video_ controls>
-            <source src={props.video_src} />
-            지원하지 않는 브라우저 입니다.
+        <Video_ controls autoPlay key={props.video_src}>
+          <source src={props.video_src} type="video/mp4"/>
+          지원하지 않는 브라우저 입니다.
         </Video_>
     </MainContainer>
   );

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay, FaFile } from 'react-icons/fa';
+import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay, FaFile, FaFolderPlus } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
+import { STORE_ADD } from '../redux/store';
 import { server_ip } from '../setting/env';
 
 const MainContainer = styled.div`
@@ -157,19 +159,43 @@ export default function EtcView(props) {
   const { index } = props
   const type = "Etc"
   const [etc, setEtc] = useState({})
+  const dispatch = useDispatch()
+  const { contents } = useSelector(state => state.store)
+  const contents_list = Array.from(contents)
+
+  const storeFunction = () => {
+    for (let content of contents_list) {
+      if (content.type == "Etc" && content.id == etc.id) {
+        alert("이미 찜 목록에 존재 합니다.")
+        return
+      }
+    }
+
+    const data = {
+      ...etc,
+      type: type,
+    }
+    dispatch({type: STORE_ADD, content: data})
+    alert("성공적으로 등록 하였습니다!")
+  }
 
   const getEtc = async () => {
     try {
       const etc_response = await axios.get(`${server_ip}/etc/view/${index}`)
-      setEtc(etc_response.data[0])
+      let temp_etc = etc_response.data[0]
+      if (temp_etc.sub_tags[0] === "null")
+        delete temp_etc.sub_tags
+
+      setEtc(temp_etc)
     } catch (err) {
       console.log(err)
     }
   }
+
   let sub_tags_element = []
   if (etc.sub_tags !== undefined) {
     sub_tags_element = etc.sub_tags.map(x => (
-      <a href={`/etc?query=${x}`}><HashTag># {x}</HashTag></a>
+      <a href={`/etc?query=${x}`}><HashTag key={x}># {x}</HashTag></a>
     ))
   }
 
@@ -181,7 +207,7 @@ export default function EtcView(props) {
 
     document.body.appendChild(link);
 
-    link.setAttribute('href', etc.etc);
+    link.setAttribute('href', etc.file);
     link.click();
 
     document.body.removeChild(link);
@@ -221,6 +247,7 @@ export default function EtcView(props) {
             </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
+            <FaFolderPlus onClick={storeFunction}/>
             <FaDownload onClick={downloadFile}/>
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>

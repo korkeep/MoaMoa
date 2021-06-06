@@ -210,7 +210,7 @@ export default function PostView(props) {
     }
 
     const hash_tag_elements = hash_tags.map((x, index) => (
-        <HashTag>{x} <FaRegTimesCircle onClick={e => {
+        <HashTag key={x}>{x} <FaRegTimesCircle onClick={e => {
             setHashTags([...hash_tags.slice(0, index), ...hash_tags.slice(index + 1)])
         }}/></HashTag>
     ))
@@ -223,7 +223,7 @@ export default function PostView(props) {
     });
 
     const postFile = async () => {
-        let post_response
+        let post_response, board
         if (type === '') {
             alert('파일을 올려주세요!')
             return
@@ -247,40 +247,39 @@ export default function PostView(props) {
             
             switch (type) {
                 case 'Image':
-                    data.image = await toBase64(acceptedFile[0]).split(',')[1]
-                    console.log(data)
-                    post_response = await axios.post(`${server_ip}/image/post/`, data=data)
-                    alert('성공적으로 업로드 되었습니다!')
+                    data.image = await toBase64(acceptedFile[0])
+                    data.image = data.image.split(',')[1]
+                    board = 'image'
                     break;
                 case 'Video':
                     data.video = await toBase64(acceptedFile[0])
-                    console.log(data)
-                    post_response = await axios.post(`${server_ip}/video/post/`, data=data)
-                    alert('성공적으로 업로드 되었습니다!')
+                    data.video = data.video.split(',')[1]
+                    board = 'video'
                     break;
                 case 'Audio':
                     data.music = await toBase64(acceptedFile[0])
+                    data.music = data.music.split(',')[1]
                     data.title = title
-                    console.log(data)
-                    post_response = await axios.post(`${server_ip}/music/post/`, data=data)
-                    alert('성공적으로 업로드 되었습니다!')
+                    board = 'music'
                     break;
                 case 'Etc':
                     data.file = await toBase64(acceptedFile[0])
                     data.file = data.file.split(',')[1]
                     data.title = title
-                    console.log(data)
-                    post_response = await axios.post(`${server_ip}/etc/post/`, data=data)
-                    alert('성공적으로 업로드 되었습니다!')
+                    board = 'etc'
                     break;
                 default:
                     break;
             }
+            console.log(data)
+            post_response = await axios.post(`${server_ip}/${board}/post/`, data=data)
+            alert('성공적으로 업로드 되었습니다!')
+            window.location.reload()
             
             // 창 OFF
             props.setView(false)
         } catch (err) {
-            console.log(err.response.data)
+            console.log(err)
             props.setView(false)
         }
     }

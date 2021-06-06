@@ -157,7 +157,11 @@ export default function ImageView(props) {
   const getImage = async () => {
     try {
       const image_response = await axios.get(`${server_ip}/image/view/${index}`)
-      setImage(image_response.data[0])
+      let temp_image = image_response.data[0]
+      if (temp_image.sub_tags[0] === "null")
+        delete temp_image.sub_tags
+    
+      setImage(temp_image)
     } catch (err) {
       console.log(err)
     }

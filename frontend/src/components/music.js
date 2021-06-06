@@ -57,7 +57,7 @@ export default function Music(props) {
     const content = {
       type: props.type,
       id: props.id,
-      summary: props.summary,
+      summary: props.title,
       main_tag: props.main_tag,
       sub_tags: props.sub_tags,
       src: props.src,
