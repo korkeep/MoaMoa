@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay } from 'react-icons/fa';
-import { Link } from 'react-router-dom'
-
-import Image from '../components/image';
-import { server_ip } from '../setting/env';
+import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay, FaFolderPlus } from 'react-icons/fa';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { server_ip } from '../setting/env';
+import { STORE_ADD } from '../redux/store';
 
 const MainContainer = styled.div`
   height: 100%;
@@ -55,7 +55,6 @@ const RelativeContainer = styled.div`
 const ButtonWrapper = styled.div`
   display: inline-block;
   position: fixed;
-  cursor: pointer;
   top: 0;
   right: 1%;
   padding: 8px;
@@ -66,16 +65,21 @@ const ButtonWrapper = styled.div`
   cursor: pointer;
 `;
 
-const ImageWrapper = styled.div`
+const MusicWrapper = styled.div`
+  width: 50%;
+  height: 100%;
   position: fixed;
-  transform: translate(-50%, -50%);
-  top:50%;
-  left:22%;
-  overflow:hidden;
-  max-width: 400px;
-  max-height: 600px;
+  top: 0%;
+  left: 0%;
+  display: flex;
   align-items: center;
   vertical-align: bottom;
+
+  audio {
+    left: 50%;
+    transform: translate(-50%, 0px);
+    position: absolute;
+  }
 `;
 
 const InfoContainer = styled.div`
@@ -149,29 +153,49 @@ const DetailContainer = styled.div`
   color: #888888;
 `
 
-export default function ImageView(props) {
+export default function MusicView(props) {
   // API 연동 전 임시
   const { index } = props
-  const type = 'Image'
-  const [image, setImage] = useState({})
-  
-  const getImage = async () => {
+  const type = "Music"
+  const [music, setMusic] = useState({})
+  const { contents } = useSelector(state => state.store)
+  const contents_list = Array.from(contents)
+  const dispatch = useDispatch()
+
+  const storeFunction = () => {
+    for (let content of contents_list) {
+      if (content.type == "Music" && content.id == music.id) {
+        alert("이미 찜 목록에 존재 합니다.")
+        return
+      }
+    }
+
+    const data = {
+      ...music,
+      type: type,
+      summary: music.title
+    }
+    dispatch({type: STORE_ADD, content: data})
+    alert("성공적으로 등록 하였습니다!")
+  }
+
+  // data patch 시 사용
+  const getMusic = async () => {
     try {
-      const image_response = await axios.get(`${server_ip}/image/view/${index}`)
-      let temp_image = image_response.data[0]
-      if (temp_image.sub_tags[0] === "null")
-        delete temp_image.sub_tags
-    
-      setImage(temp_image)
+      const music_response = await axios.get(`${server_ip}/music/view/${index}`)
+      let temp_music = music_response.data[0]
+      if (temp_music.sub_tags[0] === "null")
+        delete temp_music.sub_tags
+      setMusic(temp_music)
     } catch (err) {
       console.log(err)
     }
   }
 
   let sub_tags_element = []
-  if (image.sub_tags !== undefined) {
-    sub_tags_element = image.sub_tags.map(x => (
-      <a href={`/image?query=${x}`} key={x}><HashTag># {x}</HashTag></a>
+  if (music.sub_tags !== undefined) {
+    sub_tags_element = music.sub_tags.map(x => (
+      <a key={x} href={`/music?query=${x}`}><HashTag># {x}</HashTag></a>
     ))
   }
 
@@ -183,15 +207,14 @@ export default function ImageView(props) {
 
     document.body.appendChild(link);
 
-    link.setAttribute('href', image.image);
+    link.setAttribute('href', music.music);
     link.click();
 
     document.body.removeChild(link);
   }
 
-  // data patch 시 사용
   useEffect(async () => {
-    getImage()
+    await getMusic()
   }, [])
 
 
@@ -200,38 +223,34 @@ export default function ImageView(props) {
     <MainContainer>
       <PostContainer>
         <RelativeContainer>
-          <TitleContainer>Image View</TitleContainer>
+          <TitleContainer>Music View</TitleContainer>
           <Line />
-          <ImageWrapper>
-            <Image
-              type={type}
-              id={index}
-              summary={image.summary}
-              main_tag={image.main_tag}
-              sub_tags={image.sub_tags}
-              src={image.image}
-              onClickFunction={(id) => null}
-            />
-          </ImageWrapper>
+          <MusicWrapper>
+              <audio key={music.music} controls src={music.music}>
+                  Your browser does not support the
+                  <code>audio</code> element.
+              </audio>
+          </MusicWrapper>
           <InfoContainer>
             <HashTagContainer>
               <ContentWrapper>HashTag</ContentWrapper>
               <HashTagWrap>
-              <a href={`/image?query=${image.main_tag}`}><HashTag className="main_tag">{`# ${image.main_tag}`}</HashTag></a>
+                <HashTag className="main_tag">{`# ${music.main_tag}`}</HashTag>
                 {sub_tags_element}
               </HashTagWrap>
             </HashTagContainer>
             <ContentContainer>
               <ContentWrapper>Content</ContentWrapper>
-              <DetailContainer><FaCalendarDay /> {image.published_date}</DetailContainer>
-              <DetailContainer><FaEye /> {image.visited}</DetailContainer>
+              <DetailContainer><FaCalendarDay /> {music.published_date}</DetailContainer>
+              <DetailContainer><FaEye /> {music.visited}</DetailContainer>
               <ContentWrap>
-                {image.summary}
+                {music.summary}
               </ContentWrap>
             </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
-            <FaDownload onClick={downloadFile}/>
+            <FaFolderPlus onClick={storeFunction}/>
+            <FaDownload onClick={downloadFile} />
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>
         </RelativeContainer>

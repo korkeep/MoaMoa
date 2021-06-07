@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavLink, useHistory } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 
@@ -118,37 +118,34 @@ const AirContainer = styled.div`
 `
 
 export default function Header() {
-    const [query, setQuery] = useState('')
-    const history = useHistory()
-    const query_string = query === '' ? '' : `?query=${query}`
-
-    function onMainClick(e) {
-        setQuery('')
-        history.push('/image')
-    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('query') === undefined ? '' : urlParams.get('query')
+    const base_url = window.location.origin
+    const path_url = window.location.search.split('?')[0]
+    const query_string = (query === '' || query === null || query === undefined) ? '' : `?query=${query}`
+    const [temp_query, setTempQuery] = useState(query)
 
     return (
         <>
             <MainContainer>
                 <HeaderTop />
-                <LogoContainer onClick={onMainClick}>
-                    <img src = "logo.png"></img>
-                </LogoContainer>
+                <a href={base_url + '/image'}>
+                    <LogoContainer>
+                        <img src="/logo.png"></img>
+                    </LogoContainer>
+                </a>
                 <SearchContainer>
                     <input
                     type="text"
-                    value={query}
-                    onChange={e => setQuery(e.target.value)}
+                    value={temp_query}
+                    onChange={e => setTempQuery(e.target.value)}
                     onKeyPress={e => {
                         if (e.key === "Enter") {
-                            if (query === '') {
+                            if (temp_query === '') {
                                 alert("검색어를 입력 해 주세요.")
                                 return
                             }
-                            const params = new URLSearchParams({
-                                query: query
-                            })
-                            history.push('?' + params.toString())
+                            window.location.href = path_url + (temp_query === '' ? '' : `?query=${temp_query}`)
                         }
                     }}
                     placeholder="search"/>

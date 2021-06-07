@@ -9,6 +9,12 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     font-family: Noto Sans KR, Helvetica, Arial, sans-serif;
   }
+
+  a {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+  }
 `
 
 export default GlobalStyle

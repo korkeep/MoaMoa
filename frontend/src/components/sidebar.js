@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { FaPlus, FaInbox } from 'react-icons/fa'
+import { FaPlus, FaInbox, FaSort } from 'react-icons/fa'
+
 import StoreView from '../components/storeView'
 import PostView from '../components/postView'
+import SortView from '../components/sortView'
 
 
 const MainContainer = styled.div`
@@ -39,13 +41,24 @@ const SFaInbox = styled(FaInbox)`
     padding-top: 15px;
     color: #343a40;
 `
+
+const SFaSort = styled(FaSort)`
+    font-size:30px;
+    padding-top: 15px;
+    color: #343a40;
+`
+
 export default function SideBar() {
     const [is_postview, setIsPostview] = useState(false)
     const [is_storeview, setIsStoreview] = useState(false)
+    const [is_sortview, setIsSortView] = useState(false)
 
     return (
         <>
             <MainContainer>
+                <ButtonWrapper onClick={e => setIsSortView(!is_sortview)}>
+                    <SFaSort />
+                </ButtonWrapper>
                 <ButtonWrapper onClick={e => setIsPostview(true)}>
                     <SFaPlus />
                 </ButtonWrapper>
@@ -53,6 +66,7 @@ export default function SideBar() {
                     <SFaInbox />
                 </ButtonWrapper>
             </MainContainer>
+            {is_sortview && <SortView />}
             {is_postview && <PostView setView={setIsPostview}/>}
             {is_storeview && <StoreView setView={setIsStoreview}/>}
         </>

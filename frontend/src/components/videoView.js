@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaRegTimesCircle } from 'react-icons/fa';
-import Image from '../components/image';
+import { FaRegTimesCircle, FaDownload, FaEye, FaCalendarDay, FaFolderPlus } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { STORE_ADD } from '../redux/store';
+import Video from '../components/video';
+import { server_ip } from '../setting/env';
+import axios from 'axios';
 
 const MainContainer = styled.div`
   height: 100%;
@@ -9,7 +14,7 @@ const MainContainer = styled.div`
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 2000;
   background-color: rgba(0, 0, 0, 0.3);
 `;
 
@@ -32,7 +37,7 @@ const PostContainer = styled.div`
   height: 80vh;
   width: 100%;
   max-width: 1080px;
-  z-index: 1001;
+  z-index: 2001;
   margin: auto;
   background-color: white;
 
@@ -55,15 +60,19 @@ const ButtonWrapper = styled.div`
   right: 1%;
   padding: 8px;
   font-size: 32px;
+  svg {
+    padding: 4px;
+  }
 `;
 
 const ImageWrapper = styled.div`
-  width: 50%;
-  height: 100%;
   position: fixed;
-  top: 0%;
-  left: 0%;
-  display: flex;
+  transform: translate(-50%, -50%);
+  top:50%;
+  left:22%;
+  overflow:hidden;
+  max-width: 400px;
+  max-height: 600px;
   align-items: center;
   vertical-align: bottom;
 `;
@@ -80,59 +89,33 @@ const HashTagContainer = styled.div`
   padding-left: 10px;
   width: 100%;
   height: 10%;
-  margin-top: 15%;
+  margin-top: 100px;
   font-size: 20px;
   font-weight: bolder;
 `;
 
 const HashTagWrap = styled.div`
-  padding-left: 10px;
+  padding-left: 4px;
   padding-top: 10px;
-  color: #4dabf7;
   font-weight: bold;
-  font-size: 15px;
 `;
 
-const CommentContainer = styled.div`
+const ContentContainer = styled.div`
   padding-left: 10px;
   width: 100%;
   height: 60%;
   font-size: 20px;
   font-weight: bolder;
 `;
-const CommentWrap = styled.div`
+const ContentWrap = styled.div`
+  font-size: 14px;
   width: 93%;
   height: 85%;
   margin-left: 3px;
   margin-top: 10px;
   border-radius: 1em;
-  padding-left: 15px;
+  padding: 8px;
   background-color: #fff9db;
-`;
-const CommentBox = styled.div`
-  font-weight: bold;
-  font-size: 15px;
-  padding-top: 10px;
-`;
-
-const InputWrap = styled.div`
-  margin-top: 10px;
-  width: 100%;
-  height: 20%;
-`;
-
-const Input = styled.input`
-  width: 90%;
-  font-size: 18px;
-  padding: 10px;
-  margin: 10px;
-  background: papayawhip;
-  border: none;
-  outline: none;
-  border-radius: 3px;
-  ::placeholder {
-    color: palevioletred;
-  }
 `;
 
 const Line = styled.hr`
@@ -143,7 +126,93 @@ const Line = styled.hr`
   border-top: 2px solid #868e96;
 `;
 
+const ContentWrapper = styled.span`
+  margin: 6px;
+`
+
+const HashTag = styled.span`
+  font-size: 14px;
+  border: 1px solid #888888;
+  border-radius: 10px;
+  padding: 4px 8px;
+  margin-right: 8px;
+
+  &.main_tag {
+    border: 1px solid black;
+  }
+`
+
+const DetailContainer = styled.div`
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #888888;
+`
+
 export default function VideoView(props) {
+  // API 연동 전 임시
+  const { index } = props
+  const type = 'Viedo'
+  const [video, setVideo] = useState({})
+  const { contents } = useSelector(state => state.store)
+  const contents_list = Array.from(contents)
+  const dispatch = useDispatch()
+
+  const storeFunction = () => {
+    for (let content of contents_list) {
+      if (content.type == "Video" && content.id == video.id) {
+        alert("이미 찜 목록에 존재 합니다.")
+        return
+      }
+    }
+    const data = {
+      ...video,
+      type: type,
+    }
+    dispatch({type: STORE_ADD, content: data})
+    alert("찜 목록에 저장 되었습니다.")
+  }
+
+  const getVideo = async () => {
+    try {
+      const video_response = await axios.get(`${server_ip}/video/view/${index}`)
+      let temp_video = video_response.data[0]
+      if (temp_video.sub_tags[0] === "null")
+        delete temp_video.sub_tags
+
+      setVideo(temp_video)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  let sub_tags_element = []
+  if (video.sub_tags !== undefined) {
+    sub_tags_element = video.sub_tags.map(x => (
+      <a href={`/video?query=${x}`} key={x}><HashTag># {x}</HashTag></a>
+    ))
+  }
+
+  const downloadFile = () => {
+    var link = document.createElement('a');
+
+    link.setAttribute('download', null);
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+
+    link.setAttribute('href', video.video);
+    link.click();
+
+    document.body.removeChild(link);
+  }
+
+  // data patch 시 사용
+  useEffect(async () => {
+    await getVideo()
+  }, [])
+
+
+  // ImageView 클릭시 API 연동 구현 필요
   return (
     <MainContainer>
       <PostContainer>
@@ -151,25 +220,30 @@ export default function VideoView(props) {
           <TitleContainer>Video View</TitleContainer>
           <Line />
           <ImageWrapper>
-            <Image id={props.index} src={props.image[props.index].src} />
+            <Video
+              video_src={video.video}
+            />
           </ImageWrapper>
           <InfoContainer>
             <HashTagContainer>
-              HashTag
-              <HashTagWrap>#해시태그</HashTagWrap>
+              <ContentWrapper>HashTag</ContentWrapper>
+              <HashTagWrap>
+              <a href={`/video?query=${video.main_tag}`}><HashTag className="main_tag">{`# ${video.main_tag}`}</HashTag></a>
+                {sub_tags_element}
+              </HashTagWrap>
             </HashTagContainer>
-            <CommentContainer>
-              Comment
-              <CommentWrap>
-                <CommentBox>댓글1</CommentBox>
-                <CommentBox>댓글2</CommentBox>
-              </CommentWrap>
-              <InputWrap>
-                <Input type="text" placeholder="Comment Add..." />
-              </InputWrap>
-            </CommentContainer>
+            <ContentContainer>
+              <ContentWrapper>Content</ContentWrapper>
+              <DetailContainer><FaCalendarDay /> {video.published_date}</DetailContainer>
+              <DetailContainer><FaEye /> {video.visited}</DetailContainer>
+              <ContentWrap>
+                {video.summary}
+              </ContentWrap>
+            </ContentContainer>
           </InfoContainer>
           <ButtonWrapper>
+            <FaFolderPlus onClick={storeFunction} />
+            <FaDownload onClick={downloadFile} />
             <FaRegTimesCircle onClick={e => props.setIndex(-1)} />
           </ButtonWrapper>
         </RelativeContainer>

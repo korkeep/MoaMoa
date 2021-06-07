@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+
 import SEO from '../../components/SEO';
 import Image from '../../components/image';
 import ImageView from '../../components/imageView';
+import { server_ip } from '../../setting/env'
+import { QUERY_CHANGE, PAGE_CHANGE } from '../../redux/query'
 
 const MainContainer = styled.div`
   width: 92%;
@@ -21,7 +26,6 @@ const MainContainer = styled.div`
 `;
 const ImageWrapper = styled.div`
   overflow: hidden;
-  display: flex;
   align-items: center;
   margin-bottom: 20px;
   min-width: 200px;
@@ -29,112 +33,108 @@ const ImageWrapper = styled.div`
   border-radius: 2em;
   -moz-border-radius: 2em;
   -webkit-border-radius: 2em;
-  border: 1px solid #c0c0c0;
-  vertical-align: bottom;
 `;
 
 export default function ImagePage() {
   const [images, setImages] = useState([]); // Image 배열이 담겨 있음
   const [index, setIndex] = useState(-1); // Image View 가 있는 인덱스 번호 저장, -1이면 꺼진다.
-  const [page, setPage] = useState(0); // 쿼리로 던져야 하는 페이지 넘버
   const [loading, setLoading] = useState(false); // 로딩 중인지 아닌지
+  const [page, setPage] = useState(1);
+  const params = new URLSearchParams(window.location.search)
+  const url_query = params.get('query')
+  const { sort, day } = useSelector((state) => state.query)  // query 빼오기
 
-  /*function returnFunction(index) {
-        function onClickImage(e) {
-            setIndex(index)
-        }
-        return onClickImage
-    }*/
+  const test_print = () => {console.log(sort, day, page)}
 
-  const getImage = async () => {
-    setPage(page + 1);
-    setLoading(true);
-    let templist = [];
+  const initialImage = async () => {
+    test_print()
+    try {
+      // let params = {page: 1, sort: sort}, 추후제거
+      if (url_query !== null) {params.query = url_query}
+      if (sort === 'visited') {
+        if (day !== '')
+          params.day = day
+      }
+      let query_string = '?' + new URLSearchParams(params).toString()
 
-    // 여기는 API 만들어지면 업데이트 하겠습니다.
-    for (let i = 0; i < 20; i++) {
-      templist.push(
-        <ImageWrapper>
-          <Image
-            key={page * 20 + i}
-            onClickFunction={setIndex}
-            id={page * 20 + i}
-            src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg"
-          />
-        </ImageWrapper>
-      );
+      const image_list_response = await axios.get(server_ip + '/image/list' + query_string)
+      const image_list = image_list_response.data.images.map(x => (
+          <ImageWrapper key={x.id}>
+            <Image
+              type="Image"
+              id={x.id}
+              onClickFunction={setIndex}
+              summary={x.summary}
+              main_tag={x.main_tag}
+              sub_tags={x.sub_tags}
+              src={x.image}
+            />
+          </ImageWrapper>
+        )
+      )
+      setImages(image_list);
+      setPage(2)
+      return
+    } catch (err) {
+      console.log(err)
+      return
     }
-    //테스트용 샘플코드(지우셔도 됩니다.)
-    /*
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg" 
-                id = "0"
-                key = "0"
-                onClickFunction={setIndex}
-                />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2021/02/03/13/54/cupcake-5978060__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2019/06/05/10/34/mimosa-4253396__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2020/10/08/17/39/waves-5638587__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2019/01/30/11/17/zebra-3964360__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2021/02/01/13/37/cars-5970663__340.png" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2020/09/02/20/52/dock-5539524__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2021/02/03/13/54/cupcake-5978060__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2019/06/05/10/34/mimosa-4253396__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2020/10/08/17/39/waves-5638587__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2019/01/30/11/17/zebra-3964360__340.jpg" />
-        )
-        templist.push(
-            <Image
-                src="https://cdn.pixabay.com/photo/2021/02/01/13/37/cars-5970663__340.png" />
-        )
-        */
-    setImages([...images, ...templist]);
-    setLoading(false);
   };
 
-  const handleScroll = () => {
+  const getImage = async () => {
+    try {
+      // let params = {page: page, sort: sort}, 추후제거
+      if (url_query !== null) {params.query = url_query}
+      if (sort === 'visited') {
+        if (day !== '')
+          params.day = day
+      }
+      let query_string = '?' + new URLSearchParams(params).toString()
+
+      const image_list_response = await axios.get(server_ip + '/image/list' + query_string)
+      const image_list = image_list_response.data.images.map(x => (
+          <ImageWrapper key={x.id}>
+            <Image
+              type="Image"
+              id={x.id}
+              onClickFunction={setIndex}
+              summary={x.summary}
+              main_tag={x.main_tag}
+              sub_tags={x.sub_tags}
+              src={x.image}
+            />
+          </ImageWrapper>
+        )
+      )
+      setImages([...images, ...image_list]);
+      setPage(page + 1)
+
+      return
+    } catch (err) {
+      console.log(err)
+      return
+    }
+  };
+
+  const handleScroll = async () => {
+    console.log("handle Scroll")
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = document.documentElement.scrollTop;
     const clientHeight = document.documentElement.clientHeight;
-    if (scrollTop + clientHeight >= scrollHeight && loading === false) {
+    if (scrollTop + clientHeight >= scrollHeight) {
       // 페이지 끝에 도달하면 추가 데이터를 받아온다
-      getImage();
+      await getImage();
     }
   };
 
-  useEffect(() => {
-    getImage();
+  // day, sort 변경
+  useEffect(async () => {
+    await initialImage()
+  }, [day, sort]);
+  
+  // 초기 값 세팅
+  useEffect(async () => {
+    await initialImage()
   }, []);
 
   useEffect(() => {
@@ -148,9 +148,11 @@ export default function ImagePage() {
   return (
     <>
       <SEO title="Hello, DropBox!" description="Hello, DropBox!" />
-      <MainContainer>{images}</MainContainer>
+      <MainContainer id="container">{images}</MainContainer>
       {index !== -1 && (
-        <ImageView setIndex={setIndex} index={index} image={images} />
+        <ImageView
+          setIndex={setIndex}
+          index={index} />
       )}
     </>
   );
