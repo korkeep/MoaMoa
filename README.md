@@ -12,10 +12,10 @@
 - `styles`: **Style**과 관련된 **Constant Variable**가 존재합니다.  
 
 ### [Backend](https://github.com/korkeep/MoaMoa/tree/main/backend)
-- `Image`: 이미지 데이터를 처리하는 함수입니다. Post시, 이미지 썸네일이 생성됩니다.
-- `Video`: 동영상 데이터를 처리하는 함수입니다. Post시, 동영상 썸네일이 생성됩니다.
+- `Image`: 이미지 데이터를 처리하는 함수입니다. Upload 과정에서 이미지 썸네일이 생성됩니다.
+- `Video`: 동영상 데이터를 처리하는 함수입니다. Upload 과정에서 동영상 썸네일이 생성됩니다.
 - `Music`: 음원 데이터를 처리하는 함수입니다.
-- `ETC`: 이외의 데이터를 처리하는 함수입니다.
+- `ETC`: 기타 데이터를 처리하는 함수입니다.
 
 ### Collaborator
 | [<img src="https://avatars.githubusercontent.com/u/20378368?v=4" width="120">](https://github.com/korkeep)| [<img src="https://avatars.githubusercontent.com/u/28499550?v=4" width="120">](https://github.com/JustKode) | [<img src="https://avatars.githubusercontent.com/u/77139957?v=4" width="120">](https://github.com/syoon0624) | [<img src="https://avatars.githubusercontent.com/u/49023663?v=4" width="120">](https://github.com/SeongHyukJang) |
