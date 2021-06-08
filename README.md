@@ -1,5 +1,5 @@
 ## MoaMoa
-**덕질**의, **덕질**을 위한, **덕질**에 의한 DropBox 서비스 📦  
+**덕질**의, **덕질**을 위한, **덕질**에 의한 Cloud 서비스 ☁️  
 
 <img title="Frontend" alt="" src="https://user-images.githubusercontent.com/20378368/121103908-dd846880-c83b-11eb-823f-75260617c0c1.png" width="800"/>  
 
