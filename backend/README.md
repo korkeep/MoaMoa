@@ -6,8 +6,6 @@
 
 
 ### Directory
-<img title="Directory" alt="" src="https://user-images.githubusercontent.com/20378368/121104366-df9af700-c83c-11eb-85be-22792588e8c7.png" width="800"/>  
-
 **Serverless** 환경을 구축하기 위해 **API Gateway**, **Lambda**를 사용했습니다.  
 
 - `Image`: 이미지 데이터를 처리하는 함수입니다. Post시, 이미지 썸네일이 생성됩니다.
@@ -17,8 +15,6 @@
 
 
 ### Storage
-<img title="Storage" alt="" src="https://user-images.githubusercontent.com/20378368/121104754-a57e2500-c83d-11eb-9a69-6320726fdd52.png" width="800"/>  
-
 메타데이터를 저장하기 위해 **RDS**를, 원본 데이터를 저장하기 위해 **S3**를 사용했습니다.  
 데이터가 **RDS**에 저장되는 형식은 다음과 같습니다.
 
