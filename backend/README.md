@@ -5,14 +5,19 @@
 **AWS**를 이용하여 Backend 환경을 구축했습니다.  
 
 
-### Directory
-**Serverless** 환경을 구축하기 위해 **API Gateway**, **Lambda**를 사용했습니다.  
+### Lambda
+**Serverless** 환경을 구축하기 위해 **Lambda**를 사용했습니다.  
 
-- `Image`: 이미지 데이터를 처리하는 함수입니다. Post시, 이미지 썸네일이 생성됩니다.
-- `Video`: 동영상 데이터를 처리하는 함수입니다. Post시, 동영상 썸네일이 생성됩니다.
+- `Image`: 이미지 데이터를 처리하는 함수입니다. Upload 과정에서 이미지 썸네일이 생성됩니다.
+- `Video`: 동영상 데이터를 처리하는 함수입니다. Upload 과정에서 동영상 썸네일이 생성됩니다.
 - `Music`: 음원 데이터를 처리하는 함수입니다.
-- `ETC`: 이외의 데이터를 처리하는 함수입니다.
+- `ETC`: 기타 데이터를 처리하는 함수입니다.
 
+
+### API Gateway
+**Lambda**와 연결된 **API Gateway**의 구성은 다음과 같습니다.  
+
+> <img title="API-Gateway" alt="" src="https://user-images.githubusercontent.com/20378368/121121427-8346d000-c85a-11eb-934c-057da559b57e.png" width="780"/> 
 
 ### Storage
 메타데이터를 저장하기 위해 **RDS**를, 원본 데이터를 저장하기 위해 **S3**를 사용했습니다.  
